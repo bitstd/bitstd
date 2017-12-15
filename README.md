@@ -1,1 +1,2 @@
-# bitstd
+# BitSTD
+# What is BitSTD?
