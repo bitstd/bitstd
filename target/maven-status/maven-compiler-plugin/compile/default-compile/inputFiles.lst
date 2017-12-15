@@ -1,0 +1,15 @@
+E:\workspace\BitSTD\src\main\java\com\bitstd\service\IKrakenService.java
+E:\workspace\BitSTD\src\main\java\com\bitstd\cache\RedisCacheWithCluster.java
+E:\workspace\BitSTD\src\main\java\com\bitstd\cache\RedisCache.java
+E:\workspace\BitSTD\src\main\java\com\bitstd\model\AvgInfoBean.java
+E:\workspace\BitSTD\src\main\java\com\bitstd\utils\HttpUtilManager.java
+E:\workspace\BitSTD\src\main\java\com\bitstd\cache\RedisEmptyCache.java
+E:\workspace\BitSTD\src\main\java\com\bitstd\service\IBitfinexService.java
+E:\workspace\BitSTD\src\main\java\com\bitstd\service\impl\BitfinexServiceImpl.java
+E:\workspace\BitSTD\src\main\java\com\bitstd\service\ICoinbaseService.java
+E:\workspace\BitSTD\src\main\java\com\bitstd\utils\PropertyReader.java
+E:\workspace\BitSTD\src\main\java\com\bitstd\cache\RedisCacheWithoutCluster.java
+E:\workspace\BitSTD\src\main\java\com\bitstd\model\ExInfoBean.java
+E:\workspace\BitSTD\src\main\java\com\bitstd\cache\SerializeUtil.java
+E:\workspace\BitSTD\src\main\java\com\bitstd\service\IBitstampService.java
+E:\workspace\BitSTD\src\main\java\com\bitstd\utils\StringUtil.java
