@@ -7,5 +7,10 @@ package com.bitstd.task;
  * @created 12/14/17
  */
 public class BitSTDTask {
+	
+	public BitSTDTask(){
+		
+	}
+	
 	//todo
 }
