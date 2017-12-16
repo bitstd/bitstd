@@ -1,8 +1,8 @@
 
-BitSTD stands for Bit Standard Indexa blockchain standard index set, Standard & Poor's of blockchain ecology
+BitSTD stands for Bit Standard Index, a blockchain standard index set, Standard & Poor's of blockchain ecology.
 BitSTD is dedicated to build decentralized and trust-worthy approach to collectively maintain a solid standard database and develop a series of digital standards in the area of blockchain.
 
-BitSTD Version 1.0 contains BSI7BSI20 and BSI30.
+BitSTD Version 1.0 contains BSI7, BSI20 and BSI30.
 
 BSI7=BTC,ETH,BCH,XRP,BTG,LTC,DASH
 The top seven tokens with the largest market capitalization, indexed by the square root ratio, represent the changes in the value of the top seven major currencies relative to bitcoin. The market capitalization of B7 exceeds 75% of the overall market, and the ups and downs represent the largest capital flows.
