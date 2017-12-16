@@ -14,5 +14,5 @@ BSI30=ITO(Initial Token Offering) Index.
 The BSI30 Index aims to track changes in the world's top 30 tokens of assets. Token assets are applications developed on the blockchain platform. Most of the token assets are now based on the Ethereum platform and 26 of the BSI30 are based on the Ethereum platform. Given the relatively low market share of most current tokens, we selected 30 major tokens to trade initially, representing roughly 75% of the current market share, similar to the Dow Jones 30 Index. In the future, we will develop new indices to meet the needs of research and investment based on market developments. Overall, BSI30's change reflects the average status of IPO (Initial Token Offering) projects.
 
 
-Keywords BitSTD  BSI7  BSI20  BSI30 
+Keywords: BitSTD  BSI7  BSI20  BSI30 ITO
 
