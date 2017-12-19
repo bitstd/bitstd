@@ -10,6 +10,6 @@ import com.bitstd.model.ExInfoBean;
  */
 public interface IBitstampService {
 	
-	ExInfoBean getBitstampPrice(String type);
+	ExInfoBean getBitstampIndex(String type);
 	
 }

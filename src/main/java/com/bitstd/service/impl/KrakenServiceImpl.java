@@ -29,7 +29,7 @@ public class KrakenServiceImpl implements IKrakenService {
 	}
 
 	@Override
-	public ExInfoBean getKrakenPrice(String type) {
+	public ExInfoBean getKrakenIndex(String type) {
 		ExInfoBean eb = new ExInfoBean();
 		try {
 			String content = doRequest(type);

@@ -25,7 +25,7 @@ public class BitfinexServiceImpl implements IBitfinexService {
 	}
 
 	@Override
-	public ExInfoBean getBitfinexPrice(String type) {
+	public ExInfoBean getBitfinexIndex(String type) {
 		ExInfoBean eb = new ExInfoBean();
 		try {
 			String content = doRequest(type);

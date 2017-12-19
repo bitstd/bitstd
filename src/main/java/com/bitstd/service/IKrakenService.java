@@ -10,6 +10,6 @@ import com.bitstd.model.ExInfoBean;
  */
 public interface IKrakenService {
 
-	ExInfoBean getKrakenPrice(String type);
+	ExInfoBean getKrakenIndex(String type);
 
 }

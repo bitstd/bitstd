@@ -23,7 +23,7 @@ import com.bitstd.utils.Constants;
 public class BitstampServiceImpl implements IBitstampService {
 
 	@Override
-	public ExInfoBean getBitstampPrice(String type) {
+	public ExInfoBean getBitstampIndex(String type) {
 		ExInfoBean eb = new ExInfoBean();
 		String content = "";
 		try {

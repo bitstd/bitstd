@@ -25,7 +25,7 @@ public class CoinbaseServiceImpl implements ICoinbaseService{
 	}
 
 	@Override
-	public ExInfoBean getCoinbasePrice(String type) {
+	public ExInfoBean getCoinbaseIndex(String type) {
 		ExInfoBean eb = new ExInfoBean();
 		try {
 			String content = doRequest(type+"/ticker");

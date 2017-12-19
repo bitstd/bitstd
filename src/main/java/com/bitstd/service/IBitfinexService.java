@@ -10,6 +10,6 @@ import com.bitstd.model.ExInfoBean;
  */
 public interface IBitfinexService {
 	
-	ExInfoBean getBitfinexPrice(String type);
+	ExInfoBean getBitfinexIndex(String type);
 	
 }

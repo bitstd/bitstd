@@ -10,6 +10,6 @@ import com.bitstd.model.ExInfoBean;
  */
 public interface ICoinbaseService {
 
-	ExInfoBean getCoinbasePrice(String type);
+	ExInfoBean getCoinbaseIndex(String type);
 	
 }
