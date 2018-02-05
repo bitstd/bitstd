@@ -35,7 +35,7 @@ public class CoinbaseServiceImpl implements ICoinbaseService{
 			if (price > 0 && volume > 0) {
 				eb.setPrice(price);
 				eb.setVolume(volume);
-				eb.ExBeanToPrint("coinbase");
+				eb.ExBeanToPrint(type+" coinbase ");
 			}
 		} catch (HttpException e) {
 			e.printStackTrace();

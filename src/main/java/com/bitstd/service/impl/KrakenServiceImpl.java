@@ -44,7 +44,7 @@ public class KrakenServiceImpl implements IKrakenService {
 				if (price > 0 && volume > 0) {
 					eb.setPrice(price);
 					eb.setVolume(volume);
-					eb.ExBeanToPrint("kraken");
+					eb.ExBeanToPrint(type+" kraken ");
 				}
 			}
 

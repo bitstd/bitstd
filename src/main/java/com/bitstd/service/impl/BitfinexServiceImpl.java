@@ -36,7 +36,7 @@ public class BitfinexServiceImpl implements IBitfinexService {
 				if (price > 0 && volume > 0) {
 					eb.setPrice(price);
 					eb.setVolume(volume);
-					eb.ExBeanToPrint("bitfinex");
+					eb.ExBeanToPrint(type + " bitfinex ");
 				}
 			}
 		} catch (HttpException e) {

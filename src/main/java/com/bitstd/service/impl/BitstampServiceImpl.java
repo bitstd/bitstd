@@ -34,7 +34,7 @@ public class BitstampServiceImpl implements IBitstampService {
 			if (price > 0 && volume > 0) {
 				eb.setPrice(price);
 				eb.setVolume(volume);
-				eb.ExBeanToPrint("bitstamp");
+				eb.ExBeanToPrint(type+" bitstamp ");
 			}
 		} catch (BitSTDException e) {
 			e.printStackTrace();
