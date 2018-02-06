@@ -1,12 +1,18 @@
 package com.bitstd.task;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.bitstd.model.AvgInfoBean;
 import com.bitstd.model.ExInfoBean;
+import com.bitstd.model.SupplyBean;
+import com.bitstd.model.TradeParam;
 import com.bitstd.service.impl.BitfinexServiceImpl;
 import com.bitstd.service.impl.BithumbServiceImpl;
 import com.bitstd.service.impl.BitstampServiceImpl;
 import com.bitstd.service.impl.CoinbaseServiceImpl;
 import com.bitstd.service.impl.KrakenServiceImpl;
+import com.bitstd.service.impl.SupplyServiceImpl;
 
 /**
  * @file
@@ -26,50 +32,112 @@ public class BitSTDTask {
 	private BitstampServiceImpl bitstampService = new BitstampServiceImpl();
 	private CoinbaseServiceImpl coinbaseService = new CoinbaseServiceImpl();
 	private KrakenServiceImpl krakenService = new KrakenServiceImpl();
+	private SupplyServiceImpl supplyService = new SupplyServiceImpl();
+	private List<SupplyBean> listSupply = new ArrayList<SupplyBean>();
 	
 	public static void main(String[] args) {
 		BitSTDTask task = new BitSTDTask();
-		task.getETHIndex();
+		task.getBTCIndex();
+	}
+	
+	public BitSTDTask(){
+		getSupplyInfo();
+	}
+	
+	private AvgInfoBean getBITIndex(TradeParam trade){
+		AvgInfoBean bean = null;
+		ExInfoBean bitfinex = bitfinexService.getBitfinexIndex(trade.getBitfinexParam());
+		ExInfoBean bithumb = bithumbService.getBithumbIndex(trade.getBithumbParam());
+		ExInfoBean bitstamp = bitstampService.getBitstampIndex(trade.getBitstampParam());
+		ExInfoBean coinbase = coinbaseService.getCoinbaseIndex(trade.getCoinbaseParam());
+		ExInfoBean kraken = krakenService.getKrakenIndex(trade.getKrakenParam());
+		double usdprice = (bithumb.getVolume() * bithumb.getPrice() + bitfinex.getVolume() * bitfinex.getPrice()
+				+ bitstamp.getVolume() * bitstamp.getPrice() + coinbase.getVolume() * coinbase.getPrice()+ kraken.getVolume() * kraken.getPrice())
+				/ (bithumb.getVolume() + bitfinex.getVolume() + bitstamp.getVolume() + coinbase.getVolume()+ kraken.getVolume());
+		bean = new AvgInfoBean();
+		bean.setBittype(trade.getBitType());
+		bean.setUsdprice(usdprice);
+		bean.setCurrency(trade.getCurrencyType());
+		if(listSupply!=null && listSupply.size()>0){
+			for(int i =0;i<listSupply.size();i++){
+				SupplyBean sbean = listSupply.get(i);
+				if(trade.getBitType().equalsIgnoreCase(sbean.getSymbol())){
+					bean.setTotalSupply(sbean.getTotal_supply());
+					break;
+				}
+			}
+		}
+		System.out.println(bean.getBittype()+" "+bean.getUsdprice()+" "+bean.getTotalSupply());
+		return bean;
+	}
+	
+	public void getSupplyInfo(){
+		String[] symbols = {"BTC","ETH","XRP","BCH","LTC"};
+		listSupply = supplyService.getSupplyInfo(symbols);
 	}
 	
 	public AvgInfoBean getBTCIndex(){
-		AvgInfoBean bean = null;
-		ExInfoBean bitfinex = bitfinexService.getBitfinexIndex("tBTCUSD");
-		ExInfoBean bithumb = bithumbService.getBithumbIndex("BTC");
-		ExInfoBean bitstamp = bitstampService.getBitstampIndex("BTCUSD");
-		ExInfoBean coinbase = coinbaseService.getCoinbaseIndex("BTC-USD");
-		ExInfoBean kraken = krakenService.getKrakenIndex("XXBTZUSD");
-		
-		if (bithumb != null && bitfinex != null && bitstamp != null && coinbase != null&& kraken != null) {
-			double usdprice = (bithumb.getVolume() * bithumb.getPrice() + bitfinex.getVolume() * bitfinex.getPrice()
-					+ bitstamp.getVolume() * bitstamp.getPrice() + coinbase.getVolume() * coinbase.getPrice()+ kraken.getVolume() * kraken.getPrice())
-					/ (bithumb.getVolume() + bitfinex.getVolume() + bitstamp.getVolume() + coinbase.getVolume()+ kraken.getVolume());
-			bean = new AvgInfoBean();
-			bean.setBittype("BTC");
-			bean.setUsdprice(usdprice);
-			bean.setCurrency("USD");
-		}
+		TradeParam trade = new TradeParam();
+		trade.setBitfinexParam("tBTCUSD");
+		trade.setBithumbParam("BTC");
+		trade.setBitstampParam("BTCUSD");
+		trade.setCoinbaseParam("BTC-USD");
+		trade.setKrakenParam("XXBTZUSD");
+		trade.setBitType("BTC");
+		trade.setCurrencyType("USD");
+		AvgInfoBean bean = getBITIndex(trade);
 		return bean;
 	}
 	
 	public AvgInfoBean getETHIndex(){
-		AvgInfoBean bean = null;
-		ExInfoBean bitfinex = bitfinexService.getBitfinexIndex("tETHUSD");
-		ExInfoBean bithumb = bithumbService.getBithumbIndex("ETH");
-		ExInfoBean bitstamp = bitstampService.getBitstampIndex("ETHUSD");
-		ExInfoBean coinbase = coinbaseService.getCoinbaseIndex("ETH-USD");
-		ExInfoBean kraken = krakenService.getKrakenIndex("XETHZUSD");
-		
-		if (bithumb != null && bitfinex != null && bitstamp != null && coinbase != null&& kraken != null) {
-			double usdprice = (bithumb.getVolume() * bithumb.getPrice() + bitfinex.getVolume() * bitfinex.getPrice()
-					+ bitstamp.getVolume() * bitstamp.getPrice() + coinbase.getVolume() * coinbase.getPrice()+ kraken.getVolume() * kraken.getPrice())
-					/ (bithumb.getVolume() + bitfinex.getVolume() + bitstamp.getVolume() + coinbase.getVolume()+ kraken.getVolume());
-			System.out.println(usdprice);
-			bean = new AvgInfoBean();
-			bean.setBittype("BTC");
-			bean.setUsdprice(usdprice);
-			bean.setCurrency("USD");
-		}
+		TradeParam trade = new TradeParam();
+		trade.setBitfinexParam("tETHUSD");
+		trade.setBithumbParam("ETH");
+		trade.setBitstampParam("ETHUSD");
+		trade.setCoinbaseParam("ETH-USD");
+		trade.setKrakenParam("XETHZUSD");
+		trade.setBitType("ETH");
+		trade.setCurrencyType("USD");
+		AvgInfoBean bean = getBITIndex(trade);
+		return bean;
+	}
+	
+	public AvgInfoBean getXRPIndex(){
+		TradeParam trade = new TradeParam();
+		trade.setBitfinexParam("tXRPUSD");
+		trade.setBithumbParam("XRP");
+		trade.setBitstampParam("XRPUSD");
+		trade.setCoinbaseParam("XRP-USD");
+		trade.setKrakenParam("XXRPZUSD");
+		trade.setBitType("XRP");
+		trade.setCurrencyType("USD");
+		AvgInfoBean bean = getBITIndex(trade);
+		return bean;
+	}
+	
+	public AvgInfoBean getBCHIndex(){
+		TradeParam trade = new TradeParam();
+		trade.setBitfinexParam("tBCHUSD");
+		trade.setBithumbParam("BCH");
+		trade.setBitstampParam("BCHUSD");
+		trade.setCoinbaseParam("BCH-USD");
+		trade.setKrakenParam("BCHUSD");
+		trade.setBitType("BCH");
+		trade.setCurrencyType("USD");
+		AvgInfoBean bean = getBITIndex(trade);
+		return bean;
+	}
+	
+	public AvgInfoBean getLTCIndex(){
+		TradeParam trade = new TradeParam();
+		trade.setBitfinexParam("tLTCUSD");
+		trade.setBithumbParam("LTC");
+		trade.setBitstampParam("LTCUSD");
+		trade.setCoinbaseParam("LTC-USD");
+		trade.setKrakenParam("XLTCZUSD");
+		trade.setBitType("LTC");
+		trade.setCurrencyType("USD");
+		AvgInfoBean bean = getBITIndex(trade);
 		return bean;
 	}
 	

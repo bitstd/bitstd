@@ -1,6 +1,7 @@
 package com.bitstd.service.impl;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 
 import org.apache.http.HttpException;
 
@@ -10,6 +11,7 @@ import com.bitstd.model.ExInfoBean;
 import com.bitstd.service.IBitfinexService;
 import com.bitstd.utils.Constants;
 import com.bitstd.utils.HttpUtilManager;
+import com.bitstd.utils.Tools;
 
 /**
  * @file
@@ -33,6 +35,7 @@ public class BitfinexServiceImpl implements IBitfinexService {
 			if (jarray.size() == 10) {
 				double price = jarray.getDouble(6);
 				double volume = jarray.getDouble(7);
+
 				if (price > 0 && volume > 0) {
 					eb.setPrice(price);
 					eb.setVolume(volume);
@@ -42,6 +45,8 @@ public class BitfinexServiceImpl implements IBitfinexService {
 		} catch (HttpException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return eb;

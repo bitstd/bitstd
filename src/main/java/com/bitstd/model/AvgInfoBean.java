@@ -12,6 +12,15 @@ public class AvgInfoBean {
 	String currency;
 	double rate;
 	double usdprice;
+	double totalSupply;
+
+	public double getTotalSupply() {
+		return totalSupply;
+	}
+
+	public void setTotalSupply(double totalSupply) {
+		this.totalSupply = totalSupply;
+	}
 
 	public double getUsdprice() {
 		return usdprice;

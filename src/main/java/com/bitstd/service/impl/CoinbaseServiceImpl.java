@@ -17,8 +17,8 @@ import com.bitstd.utils.HttpUtilManager;
  * @author BitSTD
  * @created 12/13/17
  */
-public class CoinbaseServiceImpl implements ICoinbaseService{
-	
+public class CoinbaseServiceImpl implements ICoinbaseService {
+
 	private String doRequest(String type) throws HttpException, IOException {
 		HttpUtilManager httpUtil = HttpUtilManager.getInstance();
 		return httpUtil.requestHttpGet(Constants.COINBASE_API, type);
@@ -28,21 +28,23 @@ public class CoinbaseServiceImpl implements ICoinbaseService{
 	public ExInfoBean getCoinbaseIndex(String type) {
 		ExInfoBean eb = new ExInfoBean();
 		try {
-			String content = doRequest(type+"/ticker");
+			String content = doRequest(type + "/ticker");
 			JSONObject jsonObj = JSON.parseObject(content);
 			double price = jsonObj.getDouble("price");
 			double volume = jsonObj.getDouble("volume");
 			if (price > 0 && volume > 0) {
 				eb.setPrice(price);
 				eb.setVolume(volume);
-				eb.ExBeanToPrint(type+" coinbase ");
+				eb.ExBeanToPrint(type + " coinbase ");
 			}
 		} catch (HttpException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return eb;
 	}
-	
+
 }

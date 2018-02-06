@@ -42,4 +42,16 @@ public class Tools {
 		}
 		return rate;
 	}
+	
+	public static String formatFloatNumber(Double value) {
+        if(value != null){
+            if(value.doubleValue() != 0.00){
+                java.text.DecimalFormat df = new java.text.DecimalFormat("########.00");
+                return df.format(value.doubleValue());
+            }else{
+                return "0.00";
+            }
+        }
+        return "";
+    }
 }
