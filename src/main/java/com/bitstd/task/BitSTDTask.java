@@ -1,5 +1,6 @@
 package com.bitstd.task;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class BitSTDTask {
 	
 	public static void main(String[] args) {
 		BitSTDTask task = new BitSTDTask();
-		task.getBTCIndex();
+		task.getBitSTDIndex();
 	}
 	
 	public BitSTDTask(){
@@ -71,12 +72,12 @@ public class BitSTDTask {
 		return bean;
 	}
 	
-	public void getSupplyInfo(){
+	private void getSupplyInfo(){
 		String[] symbols = {"BTC","ETH","XRP","BCH","LTC"};
 		listSupply = supplyService.getSupplyInfo(symbols);
 	}
 	
-	public AvgInfoBean getBTCIndex(){
+	private AvgInfoBean getBTCIndex(){
 		TradeParam trade = new TradeParam();
 		trade.setBitfinexParam("tBTCUSD");
 		trade.setBithumbParam("BTC");
@@ -89,7 +90,7 @@ public class BitSTDTask {
 		return bean;
 	}
 	
-	public AvgInfoBean getETHIndex(){
+	private AvgInfoBean getETHIndex(){
 		TradeParam trade = new TradeParam();
 		trade.setBitfinexParam("tETHUSD");
 		trade.setBithumbParam("ETH");
@@ -102,7 +103,7 @@ public class BitSTDTask {
 		return bean;
 	}
 	
-	public AvgInfoBean getXRPIndex(){
+	private AvgInfoBean getXRPIndex(){
 		TradeParam trade = new TradeParam();
 		trade.setBitfinexParam("tXRPUSD");
 		trade.setBithumbParam("XRP");
@@ -115,7 +116,7 @@ public class BitSTDTask {
 		return bean;
 	}
 	
-	public AvgInfoBean getBCHIndex(){
+	private AvgInfoBean getBCHIndex(){
 		TradeParam trade = new TradeParam();
 		trade.setBitfinexParam("tBCHUSD");
 		trade.setBithumbParam("BCH");
@@ -128,7 +129,7 @@ public class BitSTDTask {
 		return bean;
 	}
 	
-	public AvgInfoBean getLTCIndex(){
+	private AvgInfoBean getLTCIndex(){
 		TradeParam trade = new TradeParam();
 		trade.setBitfinexParam("tLTCUSD");
 		trade.setBithumbParam("LTC");
@@ -139,6 +140,53 @@ public class BitSTDTask {
 		trade.setCurrencyType("USD");
 		AvgInfoBean bean = getBITIndex(trade);
 		return bean;
+	}
+	
+	private AvgInfoBean getAvgInfoBean(AvgInfoBean bean){
+		AvgInfoBean infobean = bean;
+		double total_supply = 100000000;
+		if(infobean.getTotalSupply()>total_supply){
+			BigDecimal defBigDecimal = new BigDecimal(total_supply);
+			BigDecimal supplyBigDecimal = new BigDecimal(infobean.getTotalSupply());
+			BigDecimal multiple = supplyBigDecimal.divide(defBigDecimal);
+			BigDecimal priceBigDecimal = new BigDecimal(infobean.getUsdprice());
+			BigDecimal npriceBigDecimal = priceBigDecimal.multiply(multiple);
+			double newprice = npriceBigDecimal.doubleValue();
+			infobean.setUsdprice(newprice);
+			infobean.setTotalSupply(total_supply);
+		}
+		return infobean;
+	}
+	
+	/**
+	 * Price calculation function: price=original price*(original circulation amount/100 million)
+	 * Choose top 5 highest market value digital coins(BTC, ETH, XRP, BCH, LTC)
+	 */
+	public void getBitSTDIndex(){
+		double bp = 1;
+		AvgInfoBean btcBean = getBTCIndex();
+		btcBean = getAvgInfoBean(btcBean);
+		AvgInfoBean ethBean = getETHIndex();
+		ethBean = getAvgInfoBean(ethBean);
+		AvgInfoBean xrpBean = getXRPIndex();
+		xrpBean = getAvgInfoBean(xrpBean);
+		AvgInfoBean bchBean = getBCHIndex();
+		bchBean = getAvgInfoBean(bchBean);
+		AvgInfoBean ltcBean = getLTCIndex();
+		ltcBean = getAvgInfoBean(ltcBean);
+		
+		BigDecimal btcBigDecimal = new BigDecimal(btcBean.getUsdprice()).multiply(new BigDecimal(btcBean.getTotalSupply()));
+		BigDecimal ethBigDecimal = new BigDecimal(ethBean.getUsdprice()).multiply(new BigDecimal(ethBean.getTotalSupply()));
+		BigDecimal xrpBigDecimal = new BigDecimal(xrpBean.getUsdprice()).multiply(new BigDecimal(xrpBean.getTotalSupply()));
+		BigDecimal bchBigDecimal = new BigDecimal(bchBean.getUsdprice()).multiply(new BigDecimal(bchBean.getTotalSupply()));
+		BigDecimal ltcBigDecimal = new BigDecimal(ltcBean.getUsdprice()).multiply(new BigDecimal(ltcBean.getTotalSupply()));
+		
+		BigDecimal numeratorBigDecimal = btcBigDecimal.add(ethBigDecimal).add(xrpBigDecimal).add(bchBigDecimal).add(ltcBigDecimal);
+		BigDecimal denominatorBigDecimal = new BigDecimal(btcBean.getTotalSupply()).add(new BigDecimal(ethBean.getTotalSupply())).add(new BigDecimal(xrpBean.getTotalSupply())).add(new BigDecimal(bchBean.getTotalSupply())).add(new BigDecimal(ltcBean.getTotalSupply())).multiply(new BigDecimal(bp));
+		
+		BigDecimal bitStdIndex = numeratorBigDecimal.divide(denominatorBigDecimal,2,BigDecimal.ROUND_HALF_DOWN);
+		System.out.println("bitStdIndex : " +bitStdIndex.doubleValue());
+		
 	}
 	
 }
