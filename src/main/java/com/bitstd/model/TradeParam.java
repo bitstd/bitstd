@@ -13,6 +13,9 @@ public class TradeParam {
 	String coinbaseParam;
 	String krakenParam;
 	String bithumbParam;
+	String okexParam;
+	String bittrexParam;
+	String binanceParam;
 	String bitType;
 	String currencyType;
 
@@ -70,6 +73,30 @@ public class TradeParam {
 
 	public void setBithumbParam(String bithumbParam) {
 		this.bithumbParam = bithumbParam;
+	}
+	
+	public String getOkexParam() {
+		return okexParam;
+	}
+
+	public void setOkexParam(String okexParam) {
+		this.okexParam = okexParam;
+	}
+
+	public String getBittrexParam() {
+		return bittrexParam;
+	}
+
+	public void setBittrexParam(String bittrexParam) {
+		this.bittrexParam = bittrexParam;
+	}
+
+	public String getBinanceParam() {
+		return binanceParam;
+	}
+
+	public void setBinanceParam(String binanceParam) {
+		this.binanceParam = binanceParam;
 	}
 
 }

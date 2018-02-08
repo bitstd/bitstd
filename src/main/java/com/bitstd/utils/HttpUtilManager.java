@@ -112,7 +112,7 @@ public class HttpUtilManager {
 		if (paramMap == null) {
 			paramMap = new HashMap<>();
 		}
-
+		
 		HttpRequestBase method = this.httpGetMethod(url, authorization);
 		method.setConfig(requestConfig);
 		long start = System.currentTimeMillis();

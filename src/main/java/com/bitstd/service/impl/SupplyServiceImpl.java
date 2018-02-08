@@ -42,7 +42,7 @@ public class SupplyServiceImpl implements ISupplyService {
 					for(int j=0;j<symbols.length;j++){
 						if (name.equalsIgnoreCase(symbols[j])) {
 							bean = new SupplyBean();
-							double total_supply = jsonObj.getDouble("total_supply");
+							double total_supply = jsonObj.getDouble("available_supply");
 							String symbol = jsonObj.getString("symbol");
 							bean.setTotal_supply(total_supply);
 							bean.setSymbol(symbol);
