@@ -30,6 +30,9 @@ public class BithumbServiceImpl implements IBithumbService {
 	public ExInfoBean getBithumbIndex(String type) {
 		double rate = Tools.getUSDRate("usdkrw", 1086);
 		ExInfoBean bean = new ExInfoBean();
+		if ("".equals(type) || type == null) {
+			return bean;
+		}
 		try {
 			String content = doRequest(type);
 			JSONObject jsonObj = JSON.parseObject(content);

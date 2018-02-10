@@ -120,12 +120,18 @@ public class BinanceServiceImpl implements IBinanceService{
 		return content;
 	}
 	
-	private double getBinanceBtcPrice(){
-		double price = 0;
+	private ExInfoBean getBinanceBtcPrice(){
+		ExInfoBean eb = new ExInfoBean();
 		try {
 			String content = doRequest("BTCUSDT");
 			JSONObject jsonObj = JSON.parseObject(content);
-			price = jsonObj.getDoubleValue("lastPrice");
+			double price = jsonObj.getDoubleValue("lastPrice");
+			double volume = jsonObj.getDoubleValue("volume");
+			if(price>0 && volume>0){
+				eb.setPrice(price);
+				eb.setVolume(volume);
+				eb.ExBeanToPrint("Binance");
+			}
 		} catch (HttpException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -133,12 +139,15 @@ public class BinanceServiceImpl implements IBinanceService{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return price;
+		return eb;
 	}
 	
 	@Override
 	public ExInfoBean getBinanceIndex(String type) {
 		ExInfoBean eb = new ExInfoBean();
+		if ("".equals(type) || type == null) {
+			return eb;
+		}
 		try {
 			String content = doRequest(type);
 			JSONObject jsonObj = JSON.parseObject(content);
@@ -146,7 +155,8 @@ public class BinanceServiceImpl implements IBinanceService{
 			double volume = jsonObj.getDoubleValue("volume");
 			if(price>0 && volume>0){
 				if(!type.contains("USDT")){
-					double btcprice = getBinanceBtcPrice();
+					ExInfoBean bean = getBinanceBtcPrice();
+					double btcprice = bean.getPrice();
 					price = new BigDecimal(price).multiply(new BigDecimal(btcprice)).doubleValue();
 				}
 				eb.setPrice(price);

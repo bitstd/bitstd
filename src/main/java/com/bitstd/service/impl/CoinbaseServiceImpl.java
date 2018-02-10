@@ -27,6 +27,9 @@ public class CoinbaseServiceImpl implements ICoinbaseService {
 	@Override
 	public ExInfoBean getCoinbaseIndex(String type) {
 		ExInfoBean eb = new ExInfoBean();
+		if ("".equals(type) || type == null) {
+			return eb;
+		}
 		try {
 			String content = doRequest(type + "/ticker");
 			JSONObject jsonObj = JSON.parseObject(content);

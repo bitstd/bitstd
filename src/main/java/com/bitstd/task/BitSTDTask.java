@@ -61,12 +61,12 @@ public class BitSTDTask {
 		AvgInfoBean bean = null;
 		ExInfoBean bitfinex = bitfinexService.getBitfinexIndex(trade.getBitfinexParam());
 		ExInfoBean bithumb = bithumbService.getBithumbIndex(trade.getBithumbParam());
-		ExInfoBean bitstamp = bitstampService.getBitstampIndex(trade.getBitstampParam());
+		ExInfoBean binance = binanceService.getBinanceIndex(trade.getBinanceParam());
 		ExInfoBean coinbase = coinbaseService.getCoinbaseIndex(trade.getCoinbaseParam());
 		ExInfoBean kraken = krakenService.getKrakenIndex(trade.getKrakenParam());
 		double usdprice = (bithumb.getVolume() * bithumb.getPrice() + bitfinex.getVolume() * bitfinex.getPrice()
-				+ bitstamp.getVolume() * bitstamp.getPrice() + coinbase.getVolume() * coinbase.getPrice()+ kraken.getVolume() * kraken.getPrice())
-				/ (bithumb.getVolume() + bitfinex.getVolume() + bitstamp.getVolume() + coinbase.getVolume()+ kraken.getVolume());
+				 + coinbase.getVolume() * coinbase.getPrice()+ kraken.getVolume() * kraken.getPrice()+binance.getVolume()*binance.getPrice())
+				/ (bithumb.getVolume() + bitfinex.getVolume()  + coinbase.getVolume()+ kraken.getVolume()+binance.getVolume());
 		bean = new AvgInfoBean();
 		bean.setBittype(trade.getBitType());
 		bean.setUsdprice(usdprice);
@@ -116,7 +116,7 @@ public class BitSTDTask {
 		TradeParam trade = new TradeParam();
 		trade.setBitfinexParam("tBTCUSD");
 		trade.setBithumbParam("BTC");
-		trade.setBitstampParam("BTCUSD");
+		trade.setBinanceParam("BTCUSDT");
 		trade.setCoinbaseParam("BTC-USD");
 		trade.setKrakenParam("XXBTZUSD");
 		trade.setBitType("BTC");
@@ -129,7 +129,7 @@ public class BitSTDTask {
 		TradeParam trade = new TradeParam();
 		trade.setBitfinexParam("tETHUSD");
 		trade.setBithumbParam("ETH");
-		trade.setBitstampParam("ETHUSD");
+		trade.setBinanceParam("ETHUSDT");
 		trade.setCoinbaseParam("ETH-USD");
 		trade.setKrakenParam("XETHZUSD");
 		trade.setBitType("ETH");
@@ -142,8 +142,7 @@ public class BitSTDTask {
 		TradeParam trade = new TradeParam();
 		trade.setBitfinexParam("tXRPUSD");
 		trade.setBithumbParam("XRP");
-		trade.setBitstampParam("XRPUSD");
-		trade.setCoinbaseParam("XRP-USD");
+		trade.setBinanceParam("XRPBTC");
 		trade.setKrakenParam("XXRPZUSD");
 		trade.setBitType("XRP");
 		trade.setCurrencyType("USD");
@@ -155,7 +154,7 @@ public class BitSTDTask {
 		TradeParam trade = new TradeParam();
 		trade.setBitfinexParam("tBCHUSD");
 		trade.setBithumbParam("BCH");
-		trade.setBitstampParam("BCHUSD");
+		trade.setBinanceParam("BCCUSDT");
 		trade.setCoinbaseParam("BCH-USD");
 		trade.setKrakenParam("BCHUSD");
 		trade.setBitType("BCH");
@@ -168,7 +167,7 @@ public class BitSTDTask {
 		TradeParam trade = new TradeParam();
 		trade.setBitfinexParam("tLTCUSD");
 		trade.setBithumbParam("LTC");
-		trade.setBitstampParam("LTCUSD");
+		trade.setBinanceParam("LTCUSDT");
 		trade.setCoinbaseParam("LTC-USD");
 		trade.setKrakenParam("XLTCZUSD");
 		trade.setBitType("LTC");
@@ -270,15 +269,12 @@ public class BitSTDTask {
 				
 				BitSTDDao bitstddao = new BitSTDDao();
 				bitstddao.doExecuteBitSTDIndex(conn, bitStdIndex.doubleValue(), "7");
-				try {
-					bitstddao.insertToBitSTDIndexHis(conn, bitStdIndex.doubleValue(), "7");
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
+				bitstddao.insertToBitSTDIndexHis(conn, bitStdIndex.doubleValue(), "7");
 				
-				Thread.sleep(1000 * 10);
+				Thread.sleep(1000 * 12);
 			}catch(Exception ex){
 				ex.printStackTrace();
+				continue;
 			}
 		}
 		

@@ -29,6 +29,9 @@ public class BitfinexServiceImpl implements IBitfinexService {
 	@Override
 	public ExInfoBean getBitfinexIndex(String type) {
 		ExInfoBean eb = new ExInfoBean();
+		if ("".equals(type) || type == null) {
+			return eb;
+		}
 		try {
 			String content = doRequest(type);
 			JSONArray jarray = JSON.parseArray(content);

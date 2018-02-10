@@ -31,6 +31,9 @@ public class OkexServiceImpl implements IOkexService {
 	@Override
 	public ExInfoBean getOkexIndex(String type) {
 		ExInfoBean eb = new ExInfoBean();
+		if ("".equals(type) || type == null) {
+			return eb;
+		}
 		try {
 			String content = doRequest(type);
 			JSONObject jsonObj = JSON.parseObject(content);

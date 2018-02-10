@@ -31,6 +31,9 @@ public class KrakenServiceImpl implements IKrakenService {
 	@Override
 	public ExInfoBean getKrakenIndex(String type) {
 		ExInfoBean eb = new ExInfoBean();
+		if ("".equals(type) || type == null) {
+			return eb;
+		}
 		try {
 			String content = doRequest(type);
 			JSONObject jsonObj = JSON.parseObject(content);

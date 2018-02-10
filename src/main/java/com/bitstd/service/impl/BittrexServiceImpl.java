@@ -32,6 +32,9 @@ public class BittrexServiceImpl implements IBittrexService {
 	@Override
 	public ExInfoBean getBittrexIndex(String type) {
 		ExInfoBean eb = new ExInfoBean();
+		if ("".equals(type) || type == null) {
+			return eb;
+		}
 		try {
 			String content = doRequest(type);
 			JSONObject jsonObj = JSON.parseObject(content);
