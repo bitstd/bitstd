@@ -5,6 +5,10 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import com.bitstd.dao.BitSTDDao;
 import com.bitstd.dao.CryptocurrencyDao;
@@ -238,6 +242,7 @@ public class BitSTDTask {
 		while(true){
 			try{
 				double bp = 1;
+				/*
 				AvgInfoBean btcBean = getBTCIndex();
 				btcBean = getAvgInfoBean(conn,btcBean);
 				AvgInfoBean ethBean = getETHIndex();
@@ -252,6 +257,50 @@ public class BitSTDTask {
 				adaBean =  getAvgInfoBean(conn,adaBean);
 				AvgInfoBean neoBean = getNEOIndex();
 				neoBean = getAvgInfoBean(conn,neoBean);
+				*/
+				AvgInfoBean btcBean = null;
+				AvgInfoBean ethBean = null;
+				AvgInfoBean xrpBean = null;
+				AvgInfoBean bchBean = null;
+				AvgInfoBean ltcBean = null;
+				AvgInfoBean adaBean = null;
+				AvgInfoBean neoBean = null;
+				int taskSize = 7;
+				ExecutorService pool = Executors.newFixedThreadPool(taskSize);
+				List<Future<AvgInfoBean>> list = new ArrayList<Future<AvgInfoBean>>();
+				for (int i = 0; i < taskSize; i++) {
+					Callable<AvgInfoBean> c = new BitSTDCallable(i,conn);
+					Future<AvgInfoBean> f = pool.submit(c);
+					list.add(f);
+				}
+				
+				pool.shutdown();
+				
+				for (int i = 0; i < list.size(); i++) {
+					switch(i){
+					case 0:
+						btcBean = (AvgInfoBean)list.get(i).get();
+						break;
+					case 1:
+						ethBean = (AvgInfoBean)list.get(i).get();
+						break;
+					case 2:
+						xrpBean = (AvgInfoBean)list.get(i).get();
+						break;
+					case 3:
+						bchBean = (AvgInfoBean)list.get(i).get();
+						break;
+					case 4:
+						ltcBean = (AvgInfoBean)list.get(i).get();
+						break;
+					case 5:
+						adaBean = (AvgInfoBean)list.get(i).get();
+						break;
+					case 6:
+						neoBean = (AvgInfoBean)list.get(i).get();
+						break;
+					}
+				}
 				
 				BigDecimal btcBigDecimal = new BigDecimal(btcBean.getUsdprice()).multiply(new BigDecimal(btcBean.getTotalSupply()));
 				BigDecimal ethBigDecimal = new BigDecimal(ethBean.getUsdprice()).multiply(new BigDecimal(ethBean.getTotalSupply()));
@@ -280,4 +329,52 @@ public class BitSTDTask {
 		
 	}
 	
+	/**
+	 * multithreading to get the return result
+	 * @author BitSTD
+	 * @created 02/27/18
+	 */
+	class BitSTDCallable implements Callable<AvgInfoBean> {
+		private AvgInfoBean bean;
+		private int index;
+		private Connection conn;
+		
+		BitSTDCallable(int index,Connection conn){
+			this.index = index;
+			this.conn = conn;
+		}
+		
+		@Override
+		public AvgInfoBean call() throws Exception {
+			switch(index){
+			case 0: //BTC
+				bean = getBTCIndex();
+				break;
+			case 1: //ETH
+				bean = getETHIndex();
+				break;
+			case 2: //XRP
+				bean = getXRPIndex();
+				break;
+			case 3: //BCH
+				bean = getBCHIndex();
+				break;
+			case 4: //LTC
+				bean = getLTCIndex();
+				break;
+			case 5: //ADA
+				bean = getADAIndex();
+				break;
+			case 6: //NEO
+				bean = getNEOIndex();
+				break;
+			}
+			bean = getAvgInfoBean(conn,bean);
+			return bean;
+		}
+		
+	}
+	
 }
+
+
