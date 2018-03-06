@@ -201,6 +201,17 @@ public class BitSTDTask {
 		return bean;
 	}
 	
+	private AvgInfoBean getEOSIndex(){
+		TradeParam trade = new TradeParam();
+		trade.setOkexParam("EOS_USDT");
+		trade.setBittrexParam("USDT-EOS");
+		trade.setBinanceParam("EOSUSDT");
+		trade.setBitType("EOS");
+		trade.setCurrencyType("USD");
+		AvgInfoBean bean = getNonmainBITIndex(trade);
+		return bean;
+	}
+	
 	/**
 	 * Price calculation function: price=original price*(original circulation amount/100 million)
 	 * @param bean
