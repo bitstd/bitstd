@@ -252,7 +252,7 @@ public class BitSTDTask {
 		
 		while(true){
 			try{
-				double bp = 0.5;
+				double bp = 1;
 				/*
 				AvgInfoBean btcBean = getBTCIndex();
 				btcBean = getAvgInfoBean(conn,btcBean);
