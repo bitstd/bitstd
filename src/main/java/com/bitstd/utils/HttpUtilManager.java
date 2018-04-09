@@ -135,6 +135,31 @@ public class HttpUtilManager {
 		}
 		return responseData;
 	}
+	
+	public String requestHttpGet(String url_prex, String type,String code) throws HttpException, IOException {
+		String url = url_prex + type;
+		HttpRequestBase method = this.httpGetMethod(url, "");
+		method.setConfig(requestConfig);
+		long start = System.currentTimeMillis();
+		HttpResponse response = client.execute(method);
+		long end = System.currentTimeMillis();
+		Logger.getGlobal().log(Level.INFO, String.valueOf(end - start));
+		HttpEntity entity = response.getEntity();
+		if (entity == null) {
+			return "";
+		}
+		InputStream is = null;
+		String responseData = "";
+		try {
+			is = entity.getContent();
+			responseData = IOUtils.toString(is, code);
+		} finally {
+			if (is != null) {
+				is.close();
+			}
+		}
+		return responseData;
+	}
 
 	public String requestHttpPost(String url_prex, String url, Map<String, String> params, String authorization)
 			throws HttpException, IOException {

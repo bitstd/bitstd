@@ -17,4 +17,5 @@ public class Constants {
 	public static String BITTREX_API = "https://bittrex.com/api/v1.1/public/getmarketsummary";
 	public static String OKEX_API = "https://www.okex.com/api/v1/ticker.do";
 	public static String SUPPLY_API = "https://api.coinmarketcap.com/v1/ticker/?limit=10";
+	public static String INDEXMARKET_API = "http://hq.sinajs.cn/list=gb_$ixic,gb_$dji,gb_$inx";
 }

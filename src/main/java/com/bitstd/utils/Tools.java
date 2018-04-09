@@ -6,7 +6,6 @@ import java.util.regex.Pattern;
 
 import org.apache.http.HttpException;
 
-
 /**
  * @file
  * @copyright defined in BitSTD/LICENSE.txt
@@ -27,10 +26,8 @@ public class Tools {
 			HttpUtilManager httpUtil = HttpUtilManager.getInstance();
 			String content = httpUtil.requestHttpGet(url, "");
 			String rateRegex = "hq_str_fx_s" + type + "=\".*?,(.*?),.*?\"";
-			Pattern pattern = Pattern.compile(rateRegex, Pattern.CASE_INSENSITIVE);
-			Matcher matcher = pattern.matcher(content);
-			if (matcher.find()) {
-				String strrate = matcher.group(1);
+			String strrate = getRegexContent(rateRegex, content);
+			if (!"".equals(strrate)) {
 				rate = Double.parseDouble(strrate);
 			}
 		} catch (HttpException e) {
@@ -42,16 +39,26 @@ public class Tools {
 		}
 		return rate;
 	}
-	
+
 	public static String formatFloatNumber(Double value) {
-        if(value != null){
-            if(value.doubleValue() != 0.00){
-                java.text.DecimalFormat df = new java.text.DecimalFormat("########.00");
-                return df.format(value.doubleValue());
-            }else{
-                return "0.00";
-            }
-        }
-        return "";
-    }
+		if (value != null) {
+			if (value.doubleValue() != 0.00) {
+				java.text.DecimalFormat df = new java.text.DecimalFormat("########.00");
+				return df.format(value.doubleValue());
+			} else {
+				return "0.00";
+			}
+		}
+		return "";
+	}
+
+	public static String getRegexContent(String regexStr, String content) {
+		String strrate = "";
+		Pattern pattern = Pattern.compile(regexStr, Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(content);
+		if (matcher.find()) {
+			strrate = matcher.group(1);
+		}
+		return strrate;
+	}
 }
