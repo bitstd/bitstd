@@ -1,6 +1,7 @@
 package com.bitstd.service.impl;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.HashMap;
 
 import org.apache.http.HttpException;
@@ -29,12 +30,27 @@ public class BittrexServiceImpl implements IBittrexService {
 		return httpUtil.requestHttpGet(Constants.BITTREX_API, "", paramMap, "");
 	}
 
+	private double getBittrexBTCPrice() {
+		double price = 0;
+		try {
+			String content = doRequest("USDT-BTC");
+			JSONObject jsonObj = JSON.parseObject(content);
+			JSONArray result = jsonObj.getJSONArray("result");
+			JSONObject jresult = result.getJSONObject(0);
+			price = jresult.getDoubleValue("Last");
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return price;
+	}
+
 	@Override
 	public ExInfoBean getBittrexIndex(String type) {
 		ExInfoBean eb = new ExInfoBean();
 		if ("".equals(type) || type == null) {
 			return eb;
 		}
+
 		try {
 			String content = doRequest(type);
 			JSONObject jsonObj = JSON.parseObject(content);
@@ -43,13 +59,23 @@ public class BittrexServiceImpl implements IBittrexService {
 			double price = jresult.getDoubleValue("Last");
 			double volume = jresult.getDoubleValue("Volume");
 			if (price > 0 && volume > 0) {
+				if (!type.contains("USDT")) {
+					double btcprice = getBittrexBTCPrice();
+					price = new BigDecimal(price).multiply(new BigDecimal(btcprice)).doubleValue();
+				}
 				eb.setPrice(price);
 				eb.setVolume(volume);
-				eb.ExBeanToPrint("Bittrex");
+				eb.ExBeanToPrint(type + " Bittrex");
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+
 		return eb;
+	}
+
+	public static void main(String[] args) {
+		BittrexServiceImpl bsi = new BittrexServiceImpl();
+		bsi.getBittrexIndex("BTC-XLM");
 	}
 }

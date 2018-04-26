@@ -2,6 +2,7 @@ package com.bitstd.service.impl;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URL;
 
 import org.apache.http.HttpException;
 
@@ -22,8 +23,9 @@ import com.bitstd.utils.Tools;
 public class BitfinexServiceImpl implements IBitfinexService {
 
 	private String doRequest(String type) throws HttpException, IOException {
+		URL url = new URL(Constants.BITFINEX_API_TICKER + type);
 		HttpUtilManager httpUtil = HttpUtilManager.getInstance();
-		return httpUtil.requestHttpGet(Constants.BITFINEX_API_TICKER, type);
+		return httpUtil.retrieveResponseFromServer(url);
 	}
 
 	@Override

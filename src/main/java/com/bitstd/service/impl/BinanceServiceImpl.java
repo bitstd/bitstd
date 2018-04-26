@@ -20,6 +20,8 @@ import com.bitstd.model.AvgInfoBean;
 import com.bitstd.model.ExInfoBean;
 import com.bitstd.service.IBinanceService;
 import com.bitstd.utils.Constants;
+import com.bitstd.utils.HttpUtilManager;
+import com.bitstd.utils.StringUtil;
 
 /**
  * @file
@@ -29,35 +31,6 @@ import com.bitstd.utils.Constants;
  */
 
 public class BinanceServiceImpl implements IBinanceService{
-	
-	protected final String retrieveResponseFromServer(URL validationUrl) {  
-        HttpURLConnection connection = null;  
-        try {  
-            connection = (HttpURLConnection) validationUrl.openConnection();  
-            final BufferedReader in = new BufferedReader(new InputStreamReader(  
-                    connection.getInputStream()));  
-  
-            String line;  
-            final StringBuffer stringBuffer = new StringBuffer(255);  
-  
-            synchronized (stringBuffer) {  
-                while ((line = in.readLine()) != null) {  
-                    stringBuffer.append(line);  
-                    stringBuffer.append("\n");  
-                }  
-                return stringBuffer.toString();  
-            }  
-  
-        } catch (final IOException e) {  
-            return null;  
-        } catch (final Exception e1){ 
-            return null;  
-        }finally {  
-            if (connection != null) {  
-                connection.disconnect();  
-            }  
-        }  
-    }  
 	
 	HostnameVerifier hv = new HostnameVerifier() {  
         public boolean verify(String urlHostName, SSLSession session) {  
@@ -112,8 +85,12 @@ public class BinanceServiceImpl implements IBinanceService{
 		try {
 			trustAllHttpsCertificates();
 			HttpsURLConnection.setDefaultHostnameVerifier(hv); 
-			URL url = new URL(Constants.BINANCE_API+"?symbol="+type);
-			content = retrieveResponseFromServer(url);
+			HashMap<String, String> paramMap = new HashMap<>();
+			paramMap.put("symbol", type);
+			String params = StringUtil.createLinkString(paramMap);
+			HttpUtilManager httpUtil = HttpUtilManager.getInstance();
+			URL url = new URL(Constants.BINANCE_API+"?"+params);
+			content = httpUtil.retrieveResponseFromServer(url);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}  
@@ -150,18 +127,20 @@ public class BinanceServiceImpl implements IBinanceService{
 		}
 		try {
 			String content = doRequest(type);
-			JSONObject jsonObj = JSON.parseObject(content);
-			double price = jsonObj.getDoubleValue("lastPrice");
-			double volume = jsonObj.getDoubleValue("volume");
-			if(price>0 && volume>0){
-				if(!type.contains("USDT")){
-					ExInfoBean bean = getBinanceBtcPrice();
-					double btcprice = bean.getPrice();
-					price = new BigDecimal(price).multiply(new BigDecimal(btcprice)).doubleValue();
+			if(content!=null){
+				JSONObject jsonObj = JSON.parseObject(content);
+				double price = jsonObj.getDoubleValue("lastPrice");
+				double volume = jsonObj.getDoubleValue("volume");
+				if(price>0 && volume>0){
+					if(!type.contains("USDT")){
+						ExInfoBean bean = getBinanceBtcPrice();
+						double btcprice = bean.getPrice();
+						price = new BigDecimal(price).multiply(new BigDecimal(btcprice)).doubleValue();
+					}
+					eb.setPrice(price);
+					eb.setVolume(volume);
+					eb.ExBeanToPrint(type + " Binance");
 				}
-				eb.setPrice(price);
-				eb.setVolume(volume);
-				eb.ExBeanToPrint("Binance");
 			}
 		}catch(Exception ex){
 			ex.printStackTrace();
