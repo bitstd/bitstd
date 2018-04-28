@@ -56,10 +56,6 @@ public class BitSTDTask {
 		task.getBitSTDIndex();
 	}
 
-	public BitSTDTask() {
-		getSupplyInfo();
-	}
-
 	private AvgInfoBean getBITIndex(TradeParam trade) {
 		AvgInfoBean bean = null;
 		double usdprice = 0;
@@ -275,6 +271,7 @@ public class BitSTDTask {
 		while (true) {
 			try {
 				double bp = 0.4;
+				getSupplyInfo();
 				/*
 				 * AvgInfoBean btcBean = getBTCIndex(); btcBean =
 				 * getAvgInfoBean(conn,btcBean); AvgInfoBean ethBean =
