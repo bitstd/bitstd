@@ -56,7 +56,8 @@ public class OkexServiceImpl implements IOkexService {
 	}
 
 	/*
-	 * BTC_USD LTC_USD ETH_USD ETC_USD BCH_USD XRP_USD EOS_USD BTG_USD
+	 * BTC_USD LTC_USD ETH_USD ETC_USD BCH_USD XRP_USD EOS_USD BTG_USD this_week
+	 * next_week quarter
 	 */
 	@Override
 	public ExInfoBean getOkexFuturesIndex(String type, String contract) {
@@ -78,12 +79,12 @@ public class OkexServiceImpl implements IOkexService {
 				eb.setPrice(price);
 				volume = volume * unit_amount / price;
 				eb.setVolume(volume);
-				eb.ExBeanToPrint(type + " Okex");
+				eb.ExBeanToPrint(type + " " + contract + " Okex");
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		return null;
+		return eb;
 	}
 
 }

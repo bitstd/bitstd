@@ -16,6 +16,7 @@ public class TradeParam {
 	String okexParam;
 	String bittrexParam;
 	String binanceParam;
+	String bitmexParam;
 	String bitType;
 	String currencyType;
 
@@ -98,5 +99,14 @@ public class TradeParam {
 	public void setBinanceParam(String binanceParam) {
 		this.binanceParam = binanceParam;
 	}
+	
+	public String getBitmexParam() {
+		return bitmexParam;
+	}
+
+	public void setBitmexParam(String bitmexParam) {
+		this.bitmexParam = bitmexParam;
+	}
+
 
 }

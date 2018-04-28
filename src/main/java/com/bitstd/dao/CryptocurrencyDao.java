@@ -16,7 +16,7 @@ import com.bitstd.model.AvgInfoBean;
 public class CryptocurrencyDao {
 
 	public void insertToBitCurrIndex(Connection conn, AvgInfoBean bean) throws SQLException {
-		String sql = "insert into STD_INDEX_PRICEHIS (ID,ASSETCODE,CURRPICE,CIRCULATION,MONEYTYPE) values(STD_SEQUENCE.nextval,?,?,?,?)";
+		String sql = "insert into STD_INDEX_PRICEHIS (ID,ASSETCODE,CURRPICE,CIRCULATION,MONEYTYPE) values(STD_INDEXHIS_SEQUENCE.nextval,?,?,?,?)";
 		PreparedStatement insertstatement = null;
 		try {
 			insertstatement = conn.prepareStatement(sql);

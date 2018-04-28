@@ -35,7 +35,7 @@ public class BitSTDDao {
 	}
 
 	private void insertToBitSTDIndex(Connection conn, double bitstdindex, String type) throws SQLException {
-		String sql = "insert into STD_CURR_INDEX (ID,INDEXVAL,TYPE) values(STD_SEQUENCE.nextval,?,?)";
+		String sql = "insert into STD_CURR_INDEX (ID,INDEXVAL,TYPE) values(STD_INDEX_SEQUENCE.nextval,?,?)";
 		PreparedStatement insertstatement = null;
 		try {
 			insertstatement = conn.prepareStatement(sql);
@@ -77,7 +77,7 @@ public class BitSTDDao {
 	}
 	
 	public void insertToBitSTDIndexHis(Connection conn, double bitstdindex, String type) throws SQLException {
-		String sql = "insert into std_indexhis (ID,INDEXVAL,TYPE) values(STD_SEQUENCE.nextval,?,?)";
+		String sql = "insert into std_indexhis (ID,INDEXVAL,TYPE) values(STD_INDEXHIS_SEQUENCE.nextval,?,?)";
 		PreparedStatement insertstatement = null;
 		try {
 			insertstatement = conn.prepareStatement(sql);
