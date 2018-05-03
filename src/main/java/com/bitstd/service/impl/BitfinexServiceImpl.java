@@ -29,7 +29,7 @@ public class BitfinexServiceImpl implements IBitfinexService {
 	}
 
 	@Override
-	public ExInfoBean getBitfinexIndex(String type) {
+	public synchronized ExInfoBean getBitfinexIndex(String type) {
 		ExInfoBean eb = new ExInfoBean();
 		if ("".equals(type) || type == null) {
 			return eb;

@@ -54,7 +54,7 @@ public class BitmexServiceImpl implements IBitmexService {
 	 *  XBTM18 ADAM18 BCHM18 ETHM18 LTCM18 XRPM18
 	 */
 	@Override
-	public ExInfoBean getBitmexFuturesIndex(String type) {
+	public synchronized ExInfoBean getBitmexFuturesIndex(String type) {
 		ExInfoBean eb = new ExInfoBean();
 		try {
 			String content = doRequest(type);
@@ -80,7 +80,7 @@ public class BitmexServiceImpl implements IBitmexService {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		} 
 		return eb;
 	}
 

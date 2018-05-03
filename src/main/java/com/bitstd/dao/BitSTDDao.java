@@ -14,7 +14,7 @@ import java.sql.SQLException;
 
 public class BitSTDDao {
 
-	private boolean isExistBitSTDIndex(Connection conn, String type) throws SQLException {
+	private double isExistBitSTDIndex(Connection conn, String type) throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		String sql = "select INDEXVAL from STD_CURR_INDEX where TYPE = ?";
@@ -23,9 +23,9 @@ public class BitSTDDao {
 			ps.setString(1, type);
 			rs = ps.executeQuery();
 			if (rs.next()) {
-				return true;
+				return rs.getDouble(1);
 			} else
-				return false;
+				return 0;
 
 		} catch (SQLException ex) {
 			throw ex;
@@ -34,13 +34,15 @@ public class BitSTDDao {
 		}
 	}
 
-	private void insertToBitSTDIndex(Connection conn, double bitstdindex, String type) throws SQLException {
-		String sql = "insert into STD_CURR_INDEX (ID,INDEXVAL,TYPE) values(STD_INDEX_SEQUENCE.nextval,?,?)";
+	private void insertToBitSTDIndex(Connection conn, double bitstdindex, double prebitstdindex, String type)
+			throws SQLException {
+		String sql = "insert into STD_CURR_INDEX (ID,INDEXVAL,PREINDEXVAL,TYPE) values(STD_INDEX_SEQUENCE.nextval,?,?,?)";
 		PreparedStatement insertstatement = null;
 		try {
 			insertstatement = conn.prepareStatement(sql);
 			insertstatement.setDouble(1, bitstdindex);
-			insertstatement.setString(2, type);
+			insertstatement.setDouble(2, prebitstdindex);
+			insertstatement.setString(3, type);
 			insertstatement.execute();
 		} catch (SQLException ex) {
 			throw ex;
@@ -49,13 +51,15 @@ public class BitSTDDao {
 		}
 	}
 
-	private void updateBitSTDIndex(Connection conn, double bitstdindex, String type) throws SQLException {
-		String sql = "update STD_CURR_INDEX set INDEXVAL=?,UPDATETIME=sysdate where type=?";
+	private void updateBitSTDIndex(Connection conn, double bitstdindex, double prebitstdindex, String type)
+			throws SQLException {
+		String sql = "update STD_CURR_INDEX set INDEXVAL=?,PREINDEXVAL=?,UPDATETIME=sysdate where type=?";
 		PreparedStatement ps = null;
 		try {
 			ps = conn.prepareStatement(sql);
 			ps.setDouble(1, bitstdindex);
-			ps.setString(2, type);
+			ps.setDouble(2, prebitstdindex);
+			ps.setString(3, type);
 			ps.executeUpdate();
 		} catch (SQLException ex) {
 			throw ex;
@@ -66,16 +70,18 @@ public class BitSTDDao {
 
 	public void doExecuteBitSTDIndex(Connection conn, double bitstdindex, String type) {
 		try {
-			if (isExistBitSTDIndex(conn, type)) {
-				updateBitSTDIndex(conn, bitstdindex, type);
+			double preindexval = isExistBitSTDIndex(conn, type);
+			System.out.println("preindexval : " +preindexval);
+			if (preindexval == 0) {
+				insertToBitSTDIndex(conn, bitstdindex, preindexval, type);
 			} else {
-				insertToBitSTDIndex(conn, bitstdindex, type);
+				updateBitSTDIndex(conn, bitstdindex, preindexval, type);
 			}
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
 	}
-	
+
 	public void insertToBitSTDIndexHis(Connection conn, double bitstdindex, String type) throws SQLException {
 		String sql = "insert into std_indexhis (ID,INDEXVAL,TYPE) values(STD_INDEXHIS_SEQUENCE.nextval,?,?)";
 		PreparedStatement insertstatement = null;

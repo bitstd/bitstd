@@ -10,7 +10,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import com.bitstd.dao.BitSTDDao;
+import com.bitstd.dao.BitSTDFuturesDao;
 import com.bitstd.dao.CryptocurrencyDao;
+import com.bitstd.dao.DBConnection;
 import com.bitstd.model.AvgInfoBean;
 import com.bitstd.model.ExInfoBean;
 import com.bitstd.model.SupplyBean;
@@ -23,8 +26,7 @@ import com.bitstd.service.impl.SupplyServiceImpl;
  * @file
  * @copyright defined in BitSTD/LICENSE.txt
  * @author BitSTD
- * @created 4/27/18 
- * BitSTD Futures Index
+ * @created 4/27/18 BitSTD Futures Index
  */
 public class BitSTDFuturesTask {
 	private OkexServiceImpl okexService = new OkexServiceImpl();
@@ -138,6 +140,16 @@ public class BitSTDFuturesTask {
 
 	private AvgInfoBean getAvgInfoBean(Connection conn, AvgInfoBean bean) {
 		AvgInfoBean infobean = bean;
+		if (infobean.getUsdprice() == 0) {
+			return infobean;
+		}
+		CryptocurrencyDao cryptdao = new CryptocurrencyDao();
+		try {
+			cryptdao.doExecuteBitSTDFuturesLast(conn, infobean);
+			cryptdao.insertToBitCurrFuturesHis(conn, infobean);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		double total_supply = 100000000;
 		if (infobean.getTotalSupply() > total_supply) {
 			BigDecimal defBigDecimal = new BigDecimal(total_supply);
@@ -149,21 +161,23 @@ public class BitSTDFuturesTask {
 			infobean.setUsdprice(newprice);
 			infobean.setTotalSupply(total_supply);
 		}
-		// CryptocurrencyDao cryptdao = new CryptocurrencyDao();
-		// try {
-		// cryptdao.insertToBitCurrIndex(conn, infobean);
-		// } catch (SQLException e) {
-		// e.printStackTrace();
-		// }
+
 		return infobean;
 	}
 
 	public void getBitSTDFuturesIndex() {
+		Connection conn = null;
+		try {
+			conn = DBConnection.getConnection();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
 		while (true) {
 			try {
 				double bp = 0.4;
 				getSupplyInfo();
-				
+
 				AvgInfoBean btcBean = null;
 				AvgInfoBean ethBean = null;
 				AvgInfoBean xrpBean = null;
@@ -176,7 +190,7 @@ public class BitSTDFuturesTask {
 				ExecutorService pool = Executors.newFixedThreadPool(taskSize);
 				List<Future<AvgInfoBean>> list = new ArrayList<Future<AvgInfoBean>>();
 				for (int i = 0; i < taskSize; i++) {
-					Callable<AvgInfoBean> c = new BitSTDFuturesCallable(i, null);
+					Callable<AvgInfoBean> c = new BitSTDFuturesCallable(i, conn);
 					Future<AvgInfoBean> f = pool.submit(c);
 					list.add(f);
 				}
@@ -209,6 +223,12 @@ public class BitSTDFuturesTask {
 					}
 				}
 
+				if (btcBean.getUsdprice() == 0 || ethBean.getUsdprice() == 0 || xrpBean.getUsdprice() == 0
+						|| bchBean.getUsdprice() == 0 || ltcBean.getUsdprice() == 0 || adaBean.getUsdprice() == 0
+						|| eosBean.getUsdprice() == 0) {
+					continue;
+				}
+
 				BigDecimal btcBigDecimal = new BigDecimal(btcBean.getUsdprice())
 						.multiply(new BigDecimal(btcBean.getTotalSupply()));
 				BigDecimal ethBigDecimal = new BigDecimal(ethBean.getUsdprice())
@@ -236,7 +256,13 @@ public class BitSTDFuturesTask {
 				BigDecimal bitStdFuturesIndex = numeratorBigDecimal.divide(denominatorBigDecimal, 2,
 						BigDecimal.ROUND_HALF_DOWN);
 				System.out.println("bitStdFuturesIndex : " + bitStdFuturesIndex.doubleValue());
-				
+
+				if (bitStdFuturesIndex.doubleValue() != 0) {
+					BitSTDFuturesDao bitstdfuturesdao = new BitSTDFuturesDao();
+					bitstdfuturesdao.doExecuteBitSTDFuturesIndex(conn, bitStdFuturesIndex.doubleValue(), "7");
+					bitstdfuturesdao.insertToBitSTDFuturesIndexHis(conn, bitStdFuturesIndex.doubleValue(), "7");
+				}
+
 				Thread.sleep(1000 * 12);
 			} catch (Exception ex) {
 				ex.printStackTrace();
