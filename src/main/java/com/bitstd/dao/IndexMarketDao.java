@@ -17,7 +17,7 @@ import com.bitstd.model.IndexBean;
 public class IndexMarketDao {
 
 	private void insertToIndexMarket(Connection conn, IndexBean indexbean, double preindexval) throws SQLException {
-		String sql = "insert into STD_CURR_SPOT (ID,TYPE,INDEXVAL,PREINDEXVAL,CHANGEVAL,CHANGEINDEXVAL,OPENVAL,HIGHVAL,LOWVAL,HIGHVALHIS,LOWVALHIS,CLOSEVAL) values(STD_INDEX_SEQUENCE.nextval,?,?,?,?,?,?,?,?,?,?,?)";
+		String sql = "insert into STD_CURR_SPOT (ID,TYPE,INDEXVAL,PREINDEXVAL,CHANGEVAL,CHANGEINDEXVAL,OPENVAL,HIGHVAL,LOWVAL,HIGHVALHIS,LOWVALHIS,CLOSEVAL,TIMES) values(STD_INDEX_SEQUENCE.nextval,?,?,?,?,?,?,?,?,?,?,?,?)";
 		PreparedStatement insertstatement = null;
 		try {
 			insertstatement = conn.prepareStatement(sql);
@@ -32,6 +32,7 @@ public class IndexMarketDao {
 			insertstatement.setDouble(9, Double.parseDouble(indexbean.getWeekHighIndex()));
 			insertstatement.setDouble(10, Double.parseDouble(indexbean.getWeeklowIndex()));
 			insertstatement.setDouble(11, Double.parseDouble(indexbean.getClosingIndex()));
+			insertstatement.setString(12, indexbean.getTime());
 			insertstatement.execute();
 		} catch (SQLException ex) {
 			throw ex;
@@ -41,7 +42,7 @@ public class IndexMarketDao {
 	}
 
 	private void updateIndexMarket(Connection conn, IndexBean indexbean, double preindexval) throws SQLException {
-		String sql = "update STD_CURR_SPOT set INDEXVAL=?,PREINDEXVAL=?,CHANGEVAL=?,CHANGEINDEXVAL=?,OPENVAL=?,HIGHVAL=?,LOWVAL=?,HIGHVALHIS=?,LOWVALHIS=?,CLOSEVAL=?,UPDATETIME=sysdate where type=?";
+		String sql = "update STD_CURR_SPOT set INDEXVAL=?,PREINDEXVAL=?,CHANGEVAL=?,CHANGEINDEXVAL=?,OPENVAL=?,HIGHVAL=?,LOWVAL=?,HIGHVALHIS=?,LOWVALHIS=?,CLOSEVAL=?,TIMES=?,UPDATETIME=sysdate where type=?";
 		PreparedStatement ps = null;
 		try {
 			ps = conn.prepareStatement(sql);
@@ -55,7 +56,8 @@ public class IndexMarketDao {
 			ps.setDouble(8, Double.parseDouble(indexbean.getWeekHighIndex()));
 			ps.setDouble(9, Double.parseDouble(indexbean.getWeeklowIndex()));
 			ps.setDouble(10, Double.parseDouble(indexbean.getClosingIndex()));
-			ps.setString(11, indexbean.getType());
+			ps.setString(11, indexbean.getTime());
+			ps.setString(12, indexbean.getType());
 			ps.executeUpdate();
 		} catch (SQLException ex) {
 			throw ex;
@@ -76,6 +78,30 @@ public class IndexMarketDao {
 				return rs.getDouble(1);
 			} else
 				return 0;
+
+		} catch (SQLException ex) {
+			throw ex;
+		} finally {
+			DBConnection.cleanUp(null, null, ps, rs);
+		}
+	}
+	
+	/*
+	 * query index market time
+	 */
+	
+	public String queryIndexMarketTime(Connection conn, String type) throws SQLException {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		String sql = "select TIMES from STD_CURR_SPOT where TYPE = ?";
+		try {
+			ps = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			ps.setString(1, type);
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				return rs.getString(1);
+			} else
+				return null;
 
 		} catch (SQLException ex) {
 			throw ex;
@@ -104,7 +130,7 @@ public class IndexMarketDao {
 	 * insert index market history data
 	 */
 	public void insertToIndexMarketHis(Connection conn, IndexBean indexbean) throws SQLException {
-		String sql = "insert into STD_SPOT_INDEXHIS (ID,TYPE,INDEXVAL,CHANGEVAL,CHANGEINDEXVAL,OPENVAL,HIGHVAL,LOWVAL,HIGHVALHIS,LOWVALHIS,CLOSEVAL) values(STD_INDEXHIS_SEQUENCE.nextval,?,?,?,?,?,?,?,?,?,?)";
+		String sql = "insert into STD_SPOT_INDEXHIS (ID,TYPE,INDEXVAL,CHANGEVAL,CHANGEINDEXVAL,OPENVAL,HIGHVAL,LOWVAL,HIGHVALHIS,LOWVALHIS,CLOSEVAL,TIMES) values(STD_INDEXHIS_SEQUENCE.nextval,?,?,?,?,?,?,?,?,?,?,?)";
 		PreparedStatement insertstatement = null;
 		try {
 			insertstatement = conn.prepareStatement(sql);
@@ -118,6 +144,7 @@ public class IndexMarketDao {
 			insertstatement.setDouble(8, Double.parseDouble(indexbean.getWeekHighIndex()));
 			insertstatement.setDouble(9, Double.parseDouble(indexbean.getWeeklowIndex()));
 			insertstatement.setDouble(10, Double.parseDouble(indexbean.getClosingIndex()));
+			insertstatement.setString(11, indexbean.getTime());
 			insertstatement.execute();
 		} catch (SQLException ex) {
 			throw ex;

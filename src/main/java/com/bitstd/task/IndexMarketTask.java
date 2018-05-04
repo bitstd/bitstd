@@ -26,24 +26,28 @@ public class IndexMarketTask {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		
-		while(true){
+
+		while (true) {
 			List<IndexBean> indexbeans = indexMarketService.getIndexMarket();
 			if (indexbeans != null && indexbeans.size() > 0) {
 				for (int i = 0; i < indexbeans.size(); i++) {
 					IndexBean indexbean = indexbeans.get(i);
 					IndexMarketDao indexMarketDao = new IndexMarketDao();
-					indexMarketDao.doExecuteIndexMarket(conn, indexbean);
+					String times = null;
 					try {
-						indexMarketDao.insertToIndexMarketHis(conn, indexbean);
+						times = indexMarketDao.queryIndexMarketTime(conn, indexbean.getType());
+						if (!indexbean.getTime().equalsIgnoreCase(times)) {
+							indexMarketDao.doExecuteIndexMarket(conn, indexbean);
+							indexMarketDao.insertToIndexMarketHis(conn, indexbean);
+						}
 					} catch (SQLException e) {
 						e.printStackTrace();
 					}
 				}
 			}
-			
+
 			try {
-				Thread.sleep(1000*12);
+				Thread.sleep(1000 * 30);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

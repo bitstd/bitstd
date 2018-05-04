@@ -236,6 +236,16 @@ public class BitSTDTask {
 	 */
 	private AvgInfoBean getAvgInfoBean(Connection conn, AvgInfoBean bean) {
 		AvgInfoBean infobean = bean;
+		if(infobean.getUsdprice()==0){
+			return infobean;
+		}
+		CryptocurrencyDao cryptdao = new CryptocurrencyDao();
+		try {
+			cryptdao.doExecuteBitSTDIndexLast(conn, infobean);
+			cryptdao.insertToBitCurrIndex(conn, infobean);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		double total_supply = 100000000;
 		if (infobean.getTotalSupply() > total_supply) {
 			BigDecimal defBigDecimal = new BigDecimal(total_supply);
@@ -247,12 +257,8 @@ public class BitSTDTask {
 			infobean.setUsdprice(newprice);
 			infobean.setTotalSupply(total_supply);
 		}
-		CryptocurrencyDao cryptdao = new CryptocurrencyDao();
-		try {
-			cryptdao.insertToBitCurrIndex(conn, infobean);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		
+		
 		return infobean;
 	}
 
@@ -336,6 +342,12 @@ public class BitSTDTask {
 						break;
 					}
 				}
+				
+				if (btcBean.getUsdprice() == 0 || ethBean.getUsdprice() == 0 || xrpBean.getUsdprice() == 0
+						|| bchBean.getUsdprice() == 0 || ltcBean.getUsdprice() == 0 || adaBean.getUsdprice() == 0
+						|| eosBean.getUsdprice() == 0) {
+					continue;
+				}
 
 				BigDecimal btcBigDecimal = new BigDecimal(btcBean.getUsdprice())
 						.multiply(new BigDecimal(btcBean.getTotalSupply()));
@@ -368,9 +380,11 @@ public class BitSTDTask {
 						BigDecimal.ROUND_HALF_DOWN);
 				System.out.println("bitStdIndex : " + bitStdIndex.doubleValue());
 
-				BitSTDDao bitstddao = new BitSTDDao();
-				bitstddao.doExecuteBitSTDIndex(conn, bitStdIndex.doubleValue(), "7");
-				bitstddao.insertToBitSTDIndexHis(conn, bitStdIndex.doubleValue(), "7");
+				if(bitStdIndex.doubleValue()!=0){
+					BitSTDDao bitstddao = new BitSTDDao();
+					bitstddao.doExecuteBitSTDIndex(conn, bitStdIndex.doubleValue(), "7");
+					bitstddao.insertToBitSTDIndexHis(conn, bitStdIndex.doubleValue(), "7");
+				}
 
 				Thread.sleep(1000 * 12);
 			} catch (Exception ex) {

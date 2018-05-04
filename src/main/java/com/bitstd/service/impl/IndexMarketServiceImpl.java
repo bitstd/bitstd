@@ -44,7 +44,7 @@ public class IndexMarketServiceImpl implements IIndexMarketService {
 				nasdaqBean.setWeeklowIndex(nasdaqStr[9]);
 				nasdaqBean.setClosingIndex(nasdaqStr[26]);
 				nasdaqBean.setTime(nasdaqStr[25]);
-				nasdaqBean.setType("nasdaq");
+				nasdaqBean.setType("2");
 				nasdaqBean.IndexBeanToPrint();
 				indexBeans.add(nasdaqBean);
 			}
@@ -64,7 +64,7 @@ public class IndexMarketServiceImpl implements IIndexMarketService {
 				djiaBean.setWeeklowIndex(djiaStr[9]);
 				djiaBean.setClosingIndex(djiaStr[26]);
 				djiaBean.setTime(djiaStr[25]);
-				djiaBean.setType("djia");
+				djiaBean.setType("0");
 				djiaBean.IndexBeanToPrint();
 				indexBeans.add(djiaBean);
 			}
@@ -84,7 +84,7 @@ public class IndexMarketServiceImpl implements IIndexMarketService {
 				sp500Bean.setWeeklowIndex(sp500Str[9]);
 				sp500Bean.setClosingIndex(sp500Str[26]);
 				sp500Bean.setTime(sp500Str[25]);
-				sp500Bean.setType("sp500");
+				sp500Bean.setType("1");
 				sp500Bean.IndexBeanToPrint();
 				indexBeans.add(sp500Bean);
 			}

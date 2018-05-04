@@ -91,7 +91,7 @@ public class HttpUtilManager {
 		long start = System.currentTimeMillis();
 		HttpResponse response = client.execute(method);
 		long end = System.currentTimeMillis();
-		Logger.getGlobal().log(Level.INFO, String.valueOf(end - start));
+//		Logger.getGlobal().log(Level.INFO, String.valueOf(end - start));
 		HttpEntity entity = response.getEntity();
 		if (entity == null) {
 			return "";
@@ -122,7 +122,7 @@ public class HttpUtilManager {
 		long start = System.currentTimeMillis();
 		HttpResponse response = client.execute(method);
 		long end = System.currentTimeMillis();
-		Logger.getGlobal().log(Level.INFO, String.valueOf(end - start));
+//		Logger.getGlobal().log(Level.INFO, String.valueOf(end - start));
 		HttpEntity entity = response.getEntity();
 		if (entity == null) {
 			return "";
@@ -147,7 +147,7 @@ public class HttpUtilManager {
 		long start = System.currentTimeMillis();
 		HttpResponse response = client.execute(method);
 		long end = System.currentTimeMillis();
-		Logger.getGlobal().log(Level.INFO, String.valueOf(end - start));
+//		Logger.getGlobal().log(Level.INFO, String.valueOf(end - start));
 		HttpEntity entity = response.getEntity();
 		if (entity == null) {
 			return "";
