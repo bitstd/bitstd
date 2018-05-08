@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -33,10 +35,15 @@ public class BitSTDFuturesTask {
 	private BitmexServiceImpl bitmexService = new BitmexServiceImpl();
 	private SupplyServiceImpl supplyService = new SupplyServiceImpl();
 	private List<SupplyBean> listSupply = new ArrayList<SupplyBean>();
+	private Map<String,String> listings = new HashMap<String,String>();
+	
+	public BitSTDFuturesTask(){
+		String[] symbols = { "BTC", "ETH", "XRP", "BCH", "LTC", "ADA", "EOS" };
+		listings = supplyService.getSupplyListings(symbols);
+	}
 
 	private void getSupplyInfo() {
-		String[] symbols = { "BTC", "ETH", "XRP", "BCH", "LTC", "ADA", "EOS" };
-		listSupply = supplyService.getSupplyInfo(symbols);
+		listSupply = supplyService.getSupplyInfo(listings);
 	}
 
 	private AvgInfoBean getBITFuturesIndex(TradeParam trade) {
@@ -261,6 +268,7 @@ public class BitSTDFuturesTask {
 					BitSTDFuturesDao bitstdfuturesdao = new BitSTDFuturesDao();
 					bitstdfuturesdao.doExecuteBitSTDFuturesIndex(conn, bitStdFuturesIndex.doubleValue(), "7");
 					bitstdfuturesdao.insertToBitSTDFuturesIndexHis(conn, bitStdFuturesIndex.doubleValue(), "7");
+					bitstdfuturesdao.insertToBitSTDFuturesIndexHisAggregation(conn, bitStdFuturesIndex.doubleValue(), "7");
 				}
 
 				Thread.sleep(1000 * 12);

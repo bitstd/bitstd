@@ -1,6 +1,7 @@
 package com.bitstd.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.bitstd.model.SupplyBean;
 
@@ -12,5 +13,8 @@ import com.bitstd.model.SupplyBean;
  */
 
 public interface ISupplyService {
-	List<SupplyBean> getSupplyInfo(String[] symbols);
+
+	Map<String, String> getSupplyListings(String[] symbols);
+
+	List<SupplyBean> getSupplyInfo(Map<String, String> listings);
 }

@@ -91,7 +91,7 @@ public class HttpUtilManager {
 		long start = System.currentTimeMillis();
 		HttpResponse response = client.execute(method);
 		long end = System.currentTimeMillis();
-//		Logger.getGlobal().log(Level.INFO, String.valueOf(end - start));
+		// Logger.getGlobal().log(Level.INFO, String.valueOf(end - start));
 		HttpEntity entity = response.getEntity();
 		if (entity == null) {
 			return "";
@@ -116,13 +116,13 @@ public class HttpUtilManager {
 		if (paramMap == null) {
 			paramMap = new HashMap<>();
 		}
-		
+
 		HttpRequestBase method = this.httpGetMethod(url, authorization);
 		method.setConfig(requestConfig);
 		long start = System.currentTimeMillis();
 		HttpResponse response = client.execute(method);
 		long end = System.currentTimeMillis();
-//		Logger.getGlobal().log(Level.INFO, String.valueOf(end - start));
+		// Logger.getGlobal().log(Level.INFO, String.valueOf(end - start));
 		HttpEntity entity = response.getEntity();
 		if (entity == null) {
 			return "";
@@ -139,15 +139,15 @@ public class HttpUtilManager {
 		}
 		return responseData;
 	}
-	
-	public String requestHttpGet(String url_prex, String type,String code) throws HttpException, IOException {
+
+	public String requestHttpGet(String url_prex, String type, String code) throws HttpException, IOException {
 		String url = url_prex + type;
 		HttpRequestBase method = this.httpGetMethod(url, "");
 		method.setConfig(requestConfig);
 		long start = System.currentTimeMillis();
 		HttpResponse response = client.execute(method);
 		long end = System.currentTimeMillis();
-//		Logger.getGlobal().log(Level.INFO, String.valueOf(end - start));
+		// Logger.getGlobal().log(Level.INFO, String.valueOf(end - start));
 		HttpEntity entity = response.getEntity();
 		if (entity == null) {
 			return "";
@@ -196,36 +196,39 @@ public class HttpUtilManager {
 		}
 		return responseData;
 	}
-	
-	public String retrieveResponseFromServer(URL validationUrl) {  
-        HttpURLConnection connection = null;  
-        try {  
-            connection = (HttpURLConnection) validationUrl.openConnection();  
-            connection.addRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)");
-            connection.setRequestMethod("GET");
-            final BufferedReader in = new BufferedReader(new InputStreamReader(  
-                    connection.getInputStream()));  
-            String line;  
-            final StringBuffer stringBuffer = new StringBuffer(255);  
-  
-            synchronized (stringBuffer) {  
-                while ((line = in.readLine()) != null) {  
-                    stringBuffer.append(line);  
-                    stringBuffer.append("\n");  
-                }  
-                return stringBuffer.toString();  
-            }  
-  
-        } catch (final IOException e) {
-        	e.printStackTrace();
-            return null;  
-        } catch (final Exception e1){
-        	e1.printStackTrace();
-            return null;  
-        }finally {  
-            if (connection != null) {  
-                connection.disconnect();  
-            }  
-        }  
-    }  
+
+	public String retrieveResponseFromServer(URL validationUrl) {
+		HttpURLConnection connection = null;
+		try {
+			connection = (HttpURLConnection) validationUrl.openConnection();
+			connection.addRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)");
+			connection.setRequestMethod("GET");
+			InputStream inputstream = connection.getInputStream();
+			if (inputstream.available() != 0) {
+				final BufferedReader in = new BufferedReader(new InputStreamReader(inputstream));
+				String line;
+				final StringBuffer stringBuffer = new StringBuffer(255);
+
+				synchronized (stringBuffer) {
+					while ((line = in.readLine()) != null) {
+						stringBuffer.append(line);
+						stringBuffer.append("\n");
+					}
+					return stringBuffer.toString();
+				}
+			}
+
+		} catch (final IOException e) {
+			e.printStackTrace();
+			return null;
+		} catch (final Exception e1) {
+			e1.printStackTrace();
+			return null;
+		} finally {
+			if (connection != null) {
+				connection.disconnect();
+			}
+		}
+		return null;
+	}
 }

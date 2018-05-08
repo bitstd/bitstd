@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -50,10 +52,16 @@ public class BitSTDTask {
 	private BinanceServiceImpl binanceService = new BinanceServiceImpl();
 	private SupplyServiceImpl supplyService = new SupplyServiceImpl();
 	private List<SupplyBean> listSupply = new ArrayList<SupplyBean>();
+	private Map<String,String> listings = new HashMap<String,String>();
 
 	public static void main(String[] args) {
 		BitSTDTask task = new BitSTDTask();
 		task.getBitSTDIndex();
+	}
+	
+	public BitSTDTask(){
+		String[] symbols = { "BTC", "ETH", "XRP", "BCH", "LTC", "ADA", "NEO", "EOS", "XLM" };
+		listings = supplyService.getSupplyListings(symbols);
 	}
 
 	private AvgInfoBean getBITIndex(TradeParam trade) {
@@ -116,8 +124,7 @@ public class BitSTDTask {
 	}
 
 	private void getSupplyInfo() {
-		String[] symbols = { "BTC", "ETH", "XRP", "BCH", "LTC", "ADA", "NEO", "EOS", "XLM" };
-		listSupply = supplyService.getSupplyInfo(symbols);
+		listSupply = supplyService.getSupplyInfo(listings);
 	}
 
 	private AvgInfoBean getBTCIndex() {
@@ -384,6 +391,7 @@ public class BitSTDTask {
 					BitSTDDao bitstddao = new BitSTDDao();
 					bitstddao.doExecuteBitSTDIndex(conn, bitStdIndex.doubleValue(), "7");
 					bitstddao.insertToBitSTDIndexHis(conn, bitStdIndex.doubleValue(), "7");
+					bitstddao.insertToBitSTDIndexHisAggregation(conn, bitStdIndex.doubleValue(), "7");
 				}
 
 				Thread.sleep(1000 * 12);

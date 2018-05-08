@@ -120,7 +120,7 @@ public class BinanceServiceImpl implements IBinanceService{
 	}
 	
 	@Override
-	public ExInfoBean getBinanceIndex(String type) {
+	public synchronized ExInfoBean getBinanceIndex(String type) {
 		ExInfoBean eb = new ExInfoBean();
 		if ("".equals(type) || type == null) {
 			return eb;
