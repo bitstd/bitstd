@@ -31,6 +31,31 @@ public class SupplyServiceImpl implements ISupplyService {
 	}
 	
 	@Override
+	public List<String> getSupplyListings() {
+		List<String> listings = new ArrayList<String>();
+		try {
+			String content = doRequest(Constants.SUPPLYLISTINGS_API);
+			JSONObject jobject = JSON.parseObject(content);
+			String data = jobject.getString("data");
+			JSONArray jarray = JSON.parseArray(data);
+			if(jarray!=null && jarray.size()>0){
+				for (int i = 0; i < jarray.size(); i++) {
+					JSONObject jsonObj = JSON.parseObject(jarray.getString(i));
+					String id = jsonObj.getString("id");
+					listings.add(id);
+				}
+			}
+		} catch (HttpException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return listings;
+	}
+	
+	@Override
 	public Map<String,String> getSupplyListings(String[] symbols){
 		Map<String,String> listings = new HashMap<String,String>();
 		try {
@@ -94,9 +119,12 @@ public class SupplyServiceImpl implements ISupplyService {
 	
 	public static void main(String[] args) {
 		SupplyServiceImpl supply = new SupplyServiceImpl();
-		String[] symbols = { "BTC", "ETH", "XRP", "BCH", "LTC", "ADA", "EOS" };
-		Map<String,String> map = supply.getSupplyListings(symbols);
-		supply.getSupplyInfo(map);
+//		String[] symbols = { "BTC", "ETH", "XRP", "BCH", "LTC", "ADA", "EOS" };
+//		Map<String,String> map = supply.getSupplyListings(symbols);
+//		supply.getSupplyInfo(map);
+		supply.getSupplyListings();
 	}
+
+	
 
 }

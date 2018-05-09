@@ -4,7 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.Map;
 
+import com.bitstd.dao.aggregation.AggregationImpl;
 import com.bitstd.model.IndexBean;
 
 /**
@@ -151,6 +154,68 @@ public class IndexMarketDao {
 		} finally {
 			DBConnection.cleanUp(null, null, insertstatement, null);
 		}
+	}
+	
+	private double isExistIndexMarkeHisTimeID(Connection conn, String tablename, long timeid, String type)
+			throws SQLException {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		String sql = "select INDEXVAL from " + tablename + " where TYPE = ? AND TIMEID =?";
+		try {
+			ps = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			ps.setString(1, type);
+			ps.setLong(2, timeid);
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				return rs.getDouble(1);
+			} else
+				return 0;
+
+		} catch (SQLException ex) {
+			throw ex;
+		} finally {
+			DBConnection.cleanUp(null, null, ps, rs);
+		}
+	}
+
+	public void insertToIndexMarkeAggregation(Connection conn, IndexBean indexbean)
+			throws SQLException {
+		Map<String, Long> Aggregations = AggregationImpl.aggregationImpl(2);
+		for (Map.Entry<String, Long> entry : Aggregations.entrySet()) {
+			String tablename = entry.getKey();
+			long times = entry.getValue();
+			if (isExistIndexMarkeHisTimeID(conn, tablename, times, indexbean.getType()) == 0) {
+				String sql = "insert into " + tablename + " (TIMEID,TYPE,THISTIME,INDEXVAL) values(?,?,?,?)";
+				PreparedStatement insertstatement = null;
+				try {
+					insertstatement = conn.prepareStatement(sql);
+					insertstatement.setLong(1, times);
+					insertstatement.setString(2, indexbean.getType());
+					insertstatement.setTimestamp(3, new Timestamp(times));
+					insertstatement.setDouble(4, Double.parseDouble(indexbean.getCurrentIndex()));
+					insertstatement.execute();
+				} catch (SQLException ex) {
+					throw ex;
+				} finally {
+					DBConnection.cleanUp(null, null, insertstatement, null);
+				}
+			} else {
+				String sql = "update " + tablename + " set INDEXVAL=? where type=? and TIMEID=?";
+				PreparedStatement ps = null;
+				try {
+					ps = conn.prepareStatement(sql);
+					ps.setDouble(1, Double.parseDouble(indexbean.getCurrentIndex()));
+					ps.setString(2, indexbean.getType());
+					ps.setDouble(3, times);
+					ps.executeUpdate();
+				} catch (SQLException ex) {
+					throw ex;
+				} finally {
+					DBConnection.cleanUp(null, null, ps, null);
+				}
+			}
+		}
+
 	}
 
 }

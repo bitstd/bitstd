@@ -39,6 +39,7 @@ public class IndexMarketTask {
 						if (!indexbean.getTime().equalsIgnoreCase(times)) {
 							indexMarketDao.doExecuteIndexMarket(conn, indexbean);
 							indexMarketDao.insertToIndexMarketHis(conn, indexbean);
+							indexMarketDao.insertToIndexMarkeAggregation(conn, indexbean);
 						}
 					} catch (SQLException e) {
 						e.printStackTrace();

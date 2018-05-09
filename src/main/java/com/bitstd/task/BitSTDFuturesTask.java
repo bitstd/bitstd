@@ -193,7 +193,7 @@ public class BitSTDFuturesTask {
 				AvgInfoBean adaBean = null;
 				AvgInfoBean eosBean = null;
 
-				int taskSize = 9;
+				int taskSize = 7;
 				ExecutorService pool = Executors.newFixedThreadPool(taskSize);
 				List<Future<AvgInfoBean>> list = new ArrayList<Future<AvgInfoBean>>();
 				for (int i = 0; i < taskSize; i++) {

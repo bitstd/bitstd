@@ -13,8 +13,12 @@ import com.bitstd.model.SupplyBean;
  */
 
 public interface ISupplyService {
+	
+	List<String> getSupplyListings();
 
 	Map<String, String> getSupplyListings(String[] symbols);
 
 	List<SupplyBean> getSupplyInfo(Map<String, String> listings);
+	
+	
 }

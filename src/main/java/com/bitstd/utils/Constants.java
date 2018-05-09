@@ -6,6 +6,7 @@ package com.bitstd.utils;
  * @author BitSTD
  * @created 12/10/17
  */
+
 public class Constants {
 	public static String BITFINEX_API_TICKER = "https://api.bitfinex.com/v2/ticker/";
 	public static String KRAKEN_API_TICKER = "https://api.kraken.com/0/public/Ticker";
@@ -18,7 +19,8 @@ public class Constants {
 	public static String OKEX_API = "https://www.okex.com/api/v1/ticker.do";
 	public static String OKEXFUTURE_API = "https://www.okex.com/api/v1/future_ticker.do";
 	public static String BITMEX_API = "https://www.bitmex.com/api/v1/instrument";
-	public static String SUPPLY_API = "https://api.coinmarketcap.com/v2/ticker/?limit=20";
+	public static String SUPPLY_API = "https://api.coinmarketcap.com/v2/ticker?limit=20";
 	public static String SUPPLYLISTINGS_API = "https://api.coinmarketcap.com/v2/listings/";
+	public static String COINMARKET_API_TICKER = "https://api.coinmarketcap.com/v2/ticker/?convert=BTC";
 	public static String INDEXMARKET_API = "http://hq.sinajs.cn/list=gb_$ixic,gb_$dji,gb_$inx";
 }

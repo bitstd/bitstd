@@ -13,7 +13,7 @@ import java.util.Map;
 public class AggregationImpl {
 
 	/*
-	 * type ： 0 IndexTableName 1 FuturesTableName
+	 * type ： 0 IndexTableName 1 FuturesTableName 2 SpotTableName
 	 */
 	public static Map<String, Long> aggregationImpl(int type) {
 		Map<String, Long> aggregations = new HashMap<String, Long>();
@@ -23,8 +23,10 @@ public class AggregationImpl {
 			String tablename = "";
 			if (type == 0) {
 				tablename = TableUtil.getIndexTableName(aggregation.getType(), aggregation.getValue());
-			} else {
+			} else if(type == 1){
 				tablename = TableUtil.getFuturesTableName(aggregation.getType(), aggregation.getValue());
+			}else if(type == 2){
+				tablename = TableUtil.getSpotIndexTableName(aggregation.getType(), aggregation.getValue());
 			}
 			aggregations.put(tablename, time);
 		}
