@@ -15,7 +15,7 @@ The rules are as follows:
 3. Coins traded in fewer than 3 mainstream exchanges are not considered.
 4. Dynamic elimination mechanism is adopted that when the 8th has market value exceeding the 7th for 30 consecutive days, and when condition 3 is met, it will replace the 7th to be counted into the index.
 
-BSI7 API : https://www.bitstd.org/api/getBitSTDIndex?type=bsi7
+BitSTD API : https://www.bitstd.org/#/docs
 
 BSI20=BSI7+ETC+IOTA+XMR+NEO+XEM+ADA+EOS+QTUM+XLM+ZEC+OMG+LSK+HSR
 BSI20 Index tracking the world's largest market capitalization of the top 20 basket of currencies relative to the price changes in Bitcoin.
