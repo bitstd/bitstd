@@ -83,6 +83,7 @@ contract BitSTDLogic{
     }
     // data migration
     function migration(address sender,address add) public{
+        require(data.owner()!=add);
         //Start data migration
         uint256 t_value=balanceOf(add);
         uint256 _value=data.getOld_BalanceOfr(add);
