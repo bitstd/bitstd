@@ -21,7 +21,7 @@ contract BitSTDShares is owned, TokenERC20 {
     mapping (address => bool) public frozenAccount;
 }
 contract BitSTDData{
-    //用来控制数据迁移
+    //Used to control data migration
     bool public data_migration_control=true;
     address public owner;
     // Public variables of the token
@@ -31,14 +31,14 @@ contract BitSTDData{
     // 18 decimals is the strongly suggested default, avoid changing it
     uint256 public totalSupply;
 
-    //包含所有余额的数组
+    //An array of all balances
     mapping (address => uint256) public balanceOf;
     mapping (address => mapping (address => uint256)) public allowance;
     uint256 public sellPrice;
     uint256 public buyPrice;
-    //允许调用的地址zhi值wei值为true
+    //The allowed address zhi value wei value is true
     mapping (address => bool) public owners;
-    //冻结地址 
+    //Freeze address
     mapping (address => bool) public frozenAccount;
     BitSTDShares private bit;
 
@@ -61,7 +61,7 @@ contract BitSTDData{
         _;
     }
 
-    //转移超级管理员
+    //Move the super administrator
     function Transfer_of_authority(address newOwner) public{
         require(msg.sender == owner);
         owner=newOwner;
@@ -94,7 +94,7 @@ contract BitSTDData{
         buyPrice = newBuyPrice;
     }
     
-    //老合约数据
+    //Old contract data
     function getOld_BalanceOfr(address add)constant  public returns(uint256){
        return bit.balanceOf(add);
     }

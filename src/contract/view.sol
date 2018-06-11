@@ -25,7 +25,7 @@ contract BitSTDLogic{
 	
 }
 contract BitSTDView{
-    //数据层
+    //data layer
 	BitSTDData private data;
 	BitSTDLogic private logic;
     string public name;

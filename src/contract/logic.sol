@@ -4,21 +4,21 @@ contract BitSTDData{
     // 18 decimals is the strongly suggested default, avoid changing it
     uint256 public totalSupply;
 
-    //包含所有余额的数组
+    //An array of all balances
     mapping (address => uint256) public balanceOf;
     mapping (address => mapping (address => uint256)) public allowance;
     uint256 public sellPrice;
     uint256 public buyPrice;
-    //允许调用的地址zhi值wei值为true
+    //The allowed address zhi value wei value is true
     mapping (address => bool) private owners;
-    //冻结地址
+    //Freeze address
     mapping (address => bool) public frozenAccount;
     function setBalanceOfr(address add,uint256 value) public {}
     function setAllowance(address add,address _add,uint256 value) public {}
     function setFrozenAccount(address add,bool value) public {}
     function addTotalSupply(uint256 value) public{}
     function setPrices(uint256 newSellPrice, uint256 newBuyPrice) public {}
-    //老合约数据
+    //Old contract data
     function getOld_BalanceOfr(address add)constant  public returns(uint256){}
 
     function getOld_Allowance(address add,address _add)constant  public returns(uint256){}
@@ -30,23 +30,23 @@ contract BitSTDData{
 interface tokenRecipient { function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData) external; }
 
 contract BitSTDLogic{
-    //数据层
+    //data layer
 	BitSTDData private data;
-	//允许调用的地址
+	//Allowed to call the address
 	mapping( address => bool) public owners;
 
-	// 这会在区块链上产生一个公开事件，它会通知客户
+	// This creates a public event on the blockchain that notifies the customer
     event Transfer(address indexed from, address indexed to, uint256 value);
     event FrozenFunds(address target, bool frozen);
 
-    // 这就会通知客户烧钱的数量
+    // This tells the customer how much money is being burned
     event Burn(address indexed from, uint256 value);
 
     function BitSTDLogic(address dataAddress){
         data=BitSTDData(dataAddress);
 		owners[msg.sender]=true;
     }
-    //修改允许调用合约的地址
+    //Modify the address that allows the contract to be invoked
 	function setOwners(address addr,bool bo) public {
 		require(data.owner()==msg.sender);
 		owners[addr]=true;
@@ -58,75 +58,75 @@ contract BitSTDLogic{
 	}
 
 	/**
-	 * 内部转移，只能通过这个合同来调用
+	 * Internal transfers can only be invoked through this contract
 	*/
     function _transfer(address _from, address _to, uint _value) internal {
         uint256 f_value=balanceOf(_from);
         uint256 t_value=balanceOf(_to);
-        // 防止传输到0x0地址。调用Burn()
+        // Prevents transmission to 0x0 address.Call to Burn ()
         require(_to != 0x0);
-        // 检查发送者是否已经足够
+        // Check that the sender is adequate
         require(f_value >= _value);
-        // 检查溢出
+        // Check the overflow
         require(t_value + _value > t_value);
-        // 将其保存为将来的断言
+        // Save it as a future assertion
         uint previousBalances = f_value + t_value;
-        // 从发送方减去
+        // Minus from the sender
         setBalanceOf(_from,f_value-_value);
-        // 向接收者添加
+        // Add to receiver
         setBalanceOf(_to,t_value+_value);
 
         emit Transfer(_from, _to, _value);
-        // 断言用于使用静态分析来发现代码中的错误。他们不应该失败
+        // Assertions are used to use static analysis to detect errors in code.They should not fail
         assert(balanceOf(_from) +balanceOf(_to) == previousBalances);
 
     }
-    //数据迁移
+    // data migration
     function migration(address sender,address add) public{
-        //数据迁移head
+        //Start data migration
         uint256 t_value=balanceOf(add);
         uint256 _value=data.getOld_BalanceOfr(add);
         require(balanceOf(sender)>=_value);
         require(t_value + _value > t_value);
-        //将余额迁移
+        //Transfer balance
         if(data.balanceOf(add)==0){
             data.setBalanceOfr(sender,balanceOf(sender)-_value);
             data.setBalanceOfr(add,_value);
         }
-        //将冻结账户迁移
+        //Frozen account migration
         if(data.getOld_FrozenAccount(add)==true){
             if(data.frozenAccount(add)!=true)
             data.setFrozenAccount(add,true);
         }
-        //数据迁移end
+        //End data migration
     }
 
-    //查询合约代币
+    //Check the contract token
     function balanceOf(address add)constant  public returns(uint256) {
         return data.balanceOf(add);
     }
 
-    //修改合约
+    //Modify the contract
     function setBalanceOf(address add,uint256 value) public {
         data.setBalanceOfr(add,value);
     }
 
     /**
-     * 传递令牌
-     * 从你的账户发送“价值”令牌到“to”
+     * Pass the token
+     * send a value token to your account
     */
     function transfer(address sender,address _to, uint256 _value) public {
         _transfer(sender, _to, _value);
     }
 
     /**
-     * 从其他地址传递令牌
-     *
-     * 将“值”令牌发送到“to”，代表“from”
-     *
-     * @param _from 发送者的地址
-     * @param _to 收件人的地址
-     * @param _value 发送数量
+     *Passing tokens from other addresses
+      *
+      * sends the value token to "to", representing "from"
+      *
+      * @param _from sender's address
+      * @param _to recipient's address
+      * @param _value number sent
      */
     function transferFrom(address _from,address sender, address _to, uint256 _value) public returns (bool success) {
         uint256 a_value=data.allowance(_from,sender);
@@ -137,12 +137,12 @@ contract BitSTDLogic{
     }
 
      /**
-     * 为其他地址设置津贴
-     *
-     * 允许“花钱者”在你的名义下只花“价值”牌
-     *
-     * @param _spender 授权使用的地址
-     * @param _value 他们能花的最多的钱
+* set allowances for other addresses
+*
+* allow the "spender" to spend only the "value" card in your name
+*
+* @param _spender authorized address
+* @param _value they can spend the most money
      */
     function approve(address _spender,address sender, uint256 _value) public returns (bool success) {
         data.setAllowance(sender,_spender, _value);
@@ -150,13 +150,13 @@ contract BitSTDLogic{
     }
 
     /**
-     * 为其他地址设置津贴并通知
-     *
-     * 允许“spender”在你的名义下只花“价值”的标记，然后将合同写在合同上。
-     *
-     * @param _spender 授权使用的地址
-     * @param _value 他们能花的最多的钱
-     * @param _extraData 向已批准的合同发送一些额外信息
+     * Grant and notify other addresses
+       *
+       * allow "spender" to only mark "value" in your name and then write the contract on it.
+       *
+       * @param _spender authorized address
+       * @param _value they can spend the most money
+       * @param _extraData sends some additional information to the approved contract
      */
     function approveAndCall(address _spender,address sender, uint256 _value, bytes _extraData)public returns (bool success) {
         tokenRecipient spender = tokenRecipient(_spender);
@@ -167,44 +167,44 @@ contract BitSTDLogic{
     }
 
      /**
-     * 摧毁代币
-     *
-     * 从系统中删除“值”代币
-     *
-     * @param _value the amount of money to burn
+     * Destroy the tokens,
+       *
+       * delete "value" tokens from the system
+       *
+       * param _value the amount of money to burn
      */
     function burn(address sender,uint256 _value) public returns (bool success) {
         uint256 f_value=balanceOf(sender);
-        require(f_value >= _value);                 // 检查发送者是否已经足够
-        setBalanceOf(sender,f_value-_value);    // 从发送方减去
-        data.addTotalSupply(data.totalSupply()-_value);                      // 更新总供给totalSupply
+        require(f_value >= _value);                 // Check that the sender is adequate
+        setBalanceOf(sender,f_value-_value);    // Minus from the sender
+        data.addTotalSupply(data.totalSupply()-_value);                      // Renewal aggregate supply
         emit Burn(sender, _value);
         return true;
     }
 
     /**
-     * 从其他帐户销毁代币
-     *
-     * 从系统中“from”中删除“值”代币。
-     *
-     * @param _from the address of the sender
-     * @param _value the amount of money to burn
+     * Destroy tokens from other accounts
+       *
+       * delete "value" tokens from "from" in the system.
+       *
+       * @param _from the address of the sender
+       * param _value the amount of money to burn
      */
     function burnFrom(address _from,address sender, uint256 _value) public returns (bool success) {
         uint256 f_value=balanceOf(sender);
         uint256 a_value=data.allowance(_from,sender);
-        require(f_value >= _value);                             // 检查目标平衡是否足够
-        require(_value <= a_value);                             // 检查津贴
-        setBalanceOf(_from,f_value-_value);                // 从目标平衡中减去
-        data.setAllowance(_from,sender,a_value-_value);  // 减去发送人的津贴
-        data.addTotalSupply(data.totalSupply()-_value);         // 更新totalSupply
+        require(f_value >= _value);                             // Check that the target balance is adequate
+        require(_value <= a_value);                             // Check the allowance
+        setBalanceOf(_from,f_value-_value);                // Subtract from the goal balance
+        data.setAllowance(_from,sender,a_value-_value);  // Minus the sender's allowance
+        data.addTotalSupply(data.totalSupply()-_value);         // update totalSupply
         emit Burn(_from, _value);
         return true;
     }
 
-    // @通知创建“mintedAmount”令牌，并将其发送给“目标”
-    // @param目标地址接收令牌
-    // @param mintedAmount将收到的令牌数量
+    //@ notifies you to create the mintedAmount token and send it to the target
+      // @param target address receiving token
+      // @param mintedAmount will receive the number of tokens
     function mintToken(address target, uint256 mintedAmount) onlyOwner public {
         uint256 f_value=balanceOf(target);
         setBalanceOf(target,f_value+mintedAmount);
@@ -213,26 +213,25 @@ contract BitSTDLogic{
         emit Transfer(this, target, mintedAmount);
     }
 
-    // @notice冻结帐户,防止“target”发送和接收令牌
-    // @param目标地址被冻结
-    // @param冻结或不冻结
+    //Notice freezes the account to prevent "target" from sending and receiving tokens
+      // @param target address is frozen
+      // @param freezes or does not freeze
     function freezeAccount(address target, bool freeze) onlyOwner public {
         data.setFrozenAccount(target,freeze);
         emit FrozenFunds(target, freeze);
     }
 
-    // @通知通过发送ether从合同中购买代币
+    // Notice of purchase of tokens by sending ether
     function buy(address sender,uint256 value) payable public {
-        uint amount = value / data.buyPrice();        // 计算购买量
+        uint amount = value / data.buyPrice();        // Calculate the purchase amount
         _transfer(this, sender, amount);              // makes the transfers
     }
-
-     // @通知出售“amount”令牌
-    // @param amount 代币的数量
+    // @notice to sell the amount token
+    // @param amount
     function sell(address sender,uint256 amount) public {
-        require(address(this).balance >= amount * data.sellPrice());      // 检查合同是否有足够的ether
+        require(address(this).balance >= amount * data.sellPrice());      // Check if there is enough ether in the contract
         _transfer(sender, this, amount);              // makes the transfers
-        sender.transfer(amount * data.sellPrice());          // 向卖方发送ether 。为了避免递归攻击，这是很重要的
+        sender.transfer(amount * data.sellPrice());          // Shipping ether to the seller.This is important to avoid recursive attacks
     }
 
 }
