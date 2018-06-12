@@ -1,5 +1,3 @@
-pragma solidity ^0.4.21;
-
 contract BitSTDData{
 
     address public owner;
@@ -59,7 +57,9 @@ contract BitSTDLogic{
     function Transfer_of_authority_data(address newOwner)onlyOwner public {
         data.Transfer_of_authority(newOwner);
     }
-
+    function setData(address dataAddress)onlyOwner public {
+        data=BitSTDData(dataAddress);
+    }
 	/**
 	 * Internal transfers can only be invoked through this contract
 	*/
@@ -92,7 +92,7 @@ contract BitSTDLogic{
         uint256 _value=data.getOld_BalanceOfr(add);
         //Transfer balance
         if(data.balanceOf(add)==0){
-             if(_value>0)
+            if(_value>0)
             _transfer(sender,add,_value);
         }
         //Frozen account migration
@@ -241,14 +241,12 @@ contract BitSTDLogic{
 
     // Notice of purchase of tokens by sending ether
     function buy(address _contract,address sender,uint256 value) payable public {
-        require(false);
         uint amount = value / data.buyPrice();        // Calculate the purchase amount
         _transfer(_contract, sender, amount);              // makes the transfers
     }
     // @notice to sell the amount token
     // @param amount
     function sell(address _contract,address sender,uint256 amount) public {
-        require(false);
         require(address(_contract).balance >= amount * data.sellPrice());      // Check if there is enough ether in the contract
         _transfer(sender, _contract, amount);              // makes the transfers
         sender.transfer(amount * data.sellPrice());          // Shipping ether to the seller.This is important to avoid recursive attacks
