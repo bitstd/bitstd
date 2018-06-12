@@ -4,26 +4,26 @@ contract BitSTDView{
 }
 contract airDrop{
     /**
-     * 
+     *
      *This is a fixed airdrop
      *
      * @param contractaddress this is Address of airdrop token contract
      * @param dsts this is Batch acceptance address
      * @param value this is Issuing number
      */
-    function airDrop(address contractaddress,address[] dsts,uint256 value) public returns(bool){
+    function airDrop_(address contractaddress,address[] dsts,uint256 value) public returns(bool){
 
         uint count= dsts.length;
         require(value>0);
-        BitSTDView View= MTKBitSTDView;
+        BitSTDView View= BitSTDView(contractaddress);
         for(uint i = 0; i < count; i++){
            View.transfer(dsts[i],value);
         }
-        
+
         return true;
     }
     /**
-     * 
+     *
      * This is a multi-value airdrop
      *
      * @param contractaddress this is Address of airdrop token contract
@@ -33,15 +33,15 @@ contract airDrop{
     function airDropValues(address contractaddress,address[] dsts,uint256[] values) public returns(bool){
 
         uint count= dsts.length;
-        BitSTDView View= MTKBitSTDView;
+        BitSTDView View= BitSTDView(contractaddress);
         for(uint i = 0; i < count; i++){
-           View.transfer(dsts[i],value[i]);
+           View.transfer(dsts[i],values[i]);
         }
-        
+
         return true;
     }
     /**
-     * 
+     *
      * This is a multi-value airdrop
      *
      * @param contractaddress this is Address of airdrop token contract
@@ -49,11 +49,11 @@ contract airDrop{
      */
     function dataMigration(address contractaddress,address[] dsts)public  returns(bool){
         uint count= dsts.length;
-        BitSTDView View= MTKBitSTDView;
+        BitSTDView View= BitSTDView(contractaddress);
         for(uint i = 0; i < count; i++){
            View.migration(dsts[i]);
         }
         return true;
     }
-   
+
 }
