@@ -83,16 +83,13 @@ contract BitSTDLogic{
     }
     // data migration
     function migration(address sender,address add) public{
-        require(data.owner()!=add);
+        require(sender!=add);
         //Start data migration
         uint256 t_value=balanceOf(add);
         uint256 _value=data.getOld_BalanceOfr(add);
-        require(balanceOf(sender)>=_value);
-        require(t_value + _value > t_value);
         //Transfer balance
         if(data.balanceOf(add)==0){
-            data.setBalanceOfr(sender,balanceOf(sender)-_value);
-            data.setBalanceOfr(add,_value);
+            _transfer(sender,add,_value);
         }
         //Frozen account migration
         if(data.getOld_FrozenAccount(add)==true){
