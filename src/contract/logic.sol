@@ -90,6 +90,7 @@ contract BitSTDLogic{
         uint256 _value=data.getOld_BalanceOfr(add);
         //Transfer balance
         if(data.balanceOf(add)==0){
+             if(_value>0)
             _transfer(sender,add,_value);
         }
         //Frozen account migration
