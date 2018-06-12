@@ -1,6 +1,9 @@
+pragma solidity ^0.4.21;
+
 contract owned {
     address public owner;
 }
+
 contract TokenERC20 {
     // Public variables of the token
     string public name;
@@ -13,6 +16,7 @@ contract TokenERC20 {
     mapping (address => uint256) public balanceOf;
     mapping (address => mapping (address => uint256)) public allowance;
 }
+
 contract BitSTDShares is owned, TokenERC20 {
 
     uint256 public sellPrice;
@@ -20,25 +24,25 @@ contract BitSTDShares is owned, TokenERC20 {
 
     mapping (address => bool) public frozenAccount;
 }
-contract BitSTDData{
-    //Used to control data migration
-    bool public data_migration_control=true;
+
+contract BitSTDData {
+    // Used to control data migration
+    bool public data_migration_control = true;
     address public owner;
     // Public variables of the token
     string public name;
     string public symbol;
     uint8 public decimals;
-    // 18 decimals is the strongly suggested default, avoid changing it
     uint256 public totalSupply;
 
-    //An array of all balances
+    // An array of all balances
     mapping (address => uint256) public balanceOf;
     mapping (address => mapping (address => uint256)) public allowance;
     uint256 public sellPrice;
     uint256 public buyPrice;
-    //The allowed address zhi value wei value is true
+    // The allowed address zhi value wei value is true
     mapping (address => bool) public owners;
-    //Freeze address
+    // Freeze address
     mapping (address => bool) public frozenAccount;
     BitSTDShares private bit;
 
@@ -60,7 +64,7 @@ contract BitSTDData{
         _;
     }
 
-    //Move the super administrator
+    // Move the super administrator
     function Transfer_of_authority(address newOwner) public{
         require(msg.sender == owner);
         owner=newOwner;
@@ -89,7 +93,7 @@ contract BitSTDData{
         buyPrice = newBuyPrice;
     }
 
-    //Old contract data
+    // Old contract data
     function getOld_BalanceOfr(address add)constant  public returns(uint256){
        return bit.balanceOf(add);
     }
