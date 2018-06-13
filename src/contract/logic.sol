@@ -1,5 +1,8 @@
 contract BitSTDData{
 
+    string public name;
+    string public symbol;
+    uint8 public decimals;
     address public owner;
     // 18 decimals is the strongly suggested default, avoid changing it
     uint256 public totalSupply;
@@ -123,6 +126,38 @@ contract BitSTDLogic{
     function balanceOf(address add)constant  public returns(uint256) {
         return data.balanceOf(add);
     }
+
+    function name()constant  public returns(string) {
+  	   return data.name();
+  	}
+
+  	function symbol()constant  public returns(string) {
+  	   return data.symbol();
+  	}
+
+  	function decimals()constant  public returns(uint8) {
+  	   return data.decimals();
+  	}
+
+  	function totalSupply()constant  public returns(uint256) {
+  	   return data.totalSupply();
+  	}
+
+  	function allowance(address add,address _add)constant  public returns(uint256) {
+  	   return data.allowance(add,_add);
+  	}
+
+  	function sellPrice()constant  public returns(uint256) {
+  	   return data.sellPrice();
+  	}
+
+  	function buyPrice()constant  public returns(uint256) {
+  	   return data.buyPrice();
+  	}
+
+  	function frozenAccount(address add)constant  public returns(bool) {
+  	   return data.frozenAccount(add);
+  	}
 
     //Modify the contract
     function setBalanceOf(address add,uint256 value)onlyOwner public {

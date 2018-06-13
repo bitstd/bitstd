@@ -1,17 +1,12 @@
-contract BitSTDData{
-    string public name;
-    string public symbol;
-    uint8 public decimals;
-    address public owner;
-    uint256 public totalSupply;
-    mapping (address => mapping (address => uint256)) public allowance;
-    uint256 public sellPrice;
-    uint256 public buyPrice;
-
-    mapping (address => bool) public frozenAccount;
-    function Transfer_of_authority(address newOwner) public{}
-}
 contract BitSTDLogic {
+    function name()constant  public returns(string) {}
+	function symbol()constant  public returns(string) {}
+	function decimals()constant  public returns(uint8) {}
+	function totalSupply()constant  public returns(uint256) {}
+	function allowance(address add,address _add)constant  public returns(uint256) {}
+	function sellPrice()constant  public returns(uint256) {}
+	function buyPrice()constant  public returns(uint256) {}
+	function frozenAccount(address add)constant  public returns(bool) {}
     function BitSTDLogic(address dataAddress){}
 	function migration(address sender,address add) public{}
 	function balanceOf(address add)constant  public returns(uint256) {}
@@ -30,8 +25,7 @@ contract BitSTDLogic {
 	function setData(address dataAddress) public {}
 }
 contract BitSTDView{
-    //data layer
-	BitSTDData private data;
+
 	BitSTDLogic private logic;
 	address public owner;
 
@@ -41,42 +35,41 @@ contract BitSTDView{
 	}
 
 	function name() constant  public returns(string) {
-	    return data.name();
+	    return logic.name();
 	}
 
 	function symbol() constant  public returns(string) {
-	    return data.symbol();
+	    return logic.symbol();
 	}
 
 	function decimals() constant  public returns(uint8) {
-	    return data.decimals();
+	    return logic.decimals();
 	}
 
 	function totalSupply() constant  public returns(uint256) {
-	    return data.totalSupply();
+	    return logic.totalSupply();
 	}
 
 	function allowance(address add,address _add) constant  public returns(uint256) {
-	    return data.allowance(add,_add);
+	    return logic.allowance(add,_add);
 	}
 
 	function sellPrice() constant  public returns(uint256) {
-	    return data.sellPrice();
+	    return logic.sellPrice();
 	}
 
 	function buyPrice() constant  public returns(uint256) {
-	    return data.buyPrice();
+	    return logic.buyPrice();
 	}
 
 	function frozenAccount(address add) constant  public returns(bool) {
-	    return data.frozenAccount(add);
+	    return logic.frozenAccount(add);
 	}
 
 	//End Query data interface
 
 	//initialize
-    function BitSTDView(address dataAddress,address logicAddressr) public {
-        data=BitSTDData(dataAddress);
+    function BitSTDView(address logicAddressr) public {
         logic=BitSTDLogic(logicAddressr);
         owner=msg.sender;
     }
@@ -90,7 +83,6 @@ contract BitSTDView{
 	//Update the address of the data and logic layer
     function setBitSTD(address dataAddress,address logicAddressr) onlyOwner public{
         logic=BitSTDLogic(logicAddressr);
-        data=BitSTDData(dataAddress);
         logic.setData(dataAddress);
     }
 
