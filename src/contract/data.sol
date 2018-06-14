@@ -84,7 +84,7 @@ contract BitSTDData {
     }
 
     function addTotalSupply(uint256 value)qualification public{
-        totalSupply+=value;
+        totalSupply=value;
     }
 
     function setPrices(uint256 newSellPrice, uint256 newBuyPrice) public {
