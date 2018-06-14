@@ -7,7 +7,6 @@ contract BitSTDLogic {
 	function sellPrice()constant  public returns(uint256) {}
 	function buyPrice()constant  public returns(uint256) {}
 	function frozenAccount(address add)constant  public returns(bool) {}
-    function BitSTDLogic(address dataAddress){}
 	function migration(address sender,address add) public{}
 	function balanceOf(address add)constant  public returns(uint256) {}
 	function transfer(address sender,address _to, uint256 _value) public {}
