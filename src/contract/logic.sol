@@ -37,12 +37,7 @@ contract BitSTDLogic{
     address public owner;
     //data layer
 	BitSTDData private data;
-	// This creates a public event on the blockchain that notifies the customer
-    event Transfer(address indexed from, address indexed to, uint256 value);
-    event FrozenFunds(address target, bool frozen);
 
-    // This tells the customer how much money is being burned
-    event Burn(address indexed from, uint256 value);
 
     function BitSTDLogic(address dataAddress){
         data=BitSTDData(dataAddress);
@@ -63,6 +58,12 @@ contract BitSTDLogic{
     function setData(address dataAddress)onlyOwner public {
         data=BitSTDData(dataAddress);
     }
+
+    // Old contract data
+    function getOld_BalanceOfr(address add)constant  public returns(uint256){
+        return data.getOld_BalanceOfr(add);
+    }
+
 	/**
 	 * Internal transfers can only be invoked through this contract
 	*/
@@ -82,7 +83,6 @@ contract BitSTDLogic{
         // Add to receiver
         setBalanceOf(_to,t_value+_value);
 
-        emit Transfer(_from, _to, _value);
         // Assertions are used to use static analysis to detect errors in code.They should not fail
         assert(balanceOf(_from) +balanceOf(_to) == previousBalances);
 
@@ -231,7 +231,6 @@ contract BitSTDLogic{
         require(f_value >= _value);                 // Check that the sender is adequate
         setBalanceOf(sender,f_value-_value);    // Minus from the sender
         data.addTotalSupply(data.totalSupply()-_value);                      // Renewal aggregate supply
-        emit Burn(sender, _value);
         return true;
     }
 
@@ -251,7 +250,7 @@ contract BitSTDLogic{
         setBalanceOf(_from,f_value-_value);                // Subtract from the goal balance
         data.setAllowance(_from,sender,a_value-_value);  // Minus the sender's allowance
         data.addTotalSupply(data.totalSupply()-_value);         // update totalSupply
-        emit Burn(_from, _value);
+
         return true;
     }
 
@@ -262,8 +261,7 @@ contract BitSTDLogic{
         uint256 f_value=balanceOf(target);
         setBalanceOf(target,f_value+mintedAmount);
         data.addTotalSupply(data.totalSupply()+mintedAmount);
-        emit Transfer(0, _contract, mintedAmount);
-        emit Transfer(_contract, target, mintedAmount);
+
     }
 
     //Notice freezes the account to prevent "target" from sending and receiving tokens
@@ -271,7 +269,7 @@ contract BitSTDLogic{
       // @param freezes or does not freeze
     function freezeAccount(address target, bool freeze) onlyOwner public {
         data.setFrozenAccount(target,freeze);
-        emit FrozenFunds(target, freeze);
+
     }
 
     // Notice of purchase of tokens by sending ether

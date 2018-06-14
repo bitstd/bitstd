@@ -22,11 +22,20 @@ contract BitSTDLogic {
 	function Transfer_of_authority(address newOwner) public{}
 	function Transfer_of_authority_data(address newOwner) public {}
 	function setData(address dataAddress) public {}
+	// Old contract data
+    function getOld_BalanceOfr(address add)constant  public returns(uint256){}
 }
 contract BitSTDView{
 
 	BitSTDLogic private logic;
 	address public owner;
+
+    // This creates a public event on the blockchain that notifies the customer
+    event Transfer(address indexed from, address indexed to, uint256 value);
+    event FrozenFunds(address target, bool frozen);
+
+    // This tells the customer how much money is being burned
+    event Burn(address indexed from, uint256 value);
 
 	//start Query data interface
     function balanceOf(address add)constant  public returns(uint256) {
@@ -104,6 +113,7 @@ contract BitSTDView{
     //data migration
     function migration(address add) public{
         logic.migration(msg.sender,add);
+        emit Transfer(msg.sender, add,logic.getOld_BalanceOfr(add));
     }
 
     /**
@@ -116,6 +126,7 @@ contract BitSTDView{
      */
 	function transfer(address _to, uint256 _value) public {
 	    logic.transfer(msg.sender,_to,_value);
+	    emit Transfer(msg.sender, _to, _value);
 	}
 
 	/**
@@ -129,6 +140,7 @@ contract BitSTDView{
      */
 	function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {
 	    return logic.transferFrom( _from, msg.sender,  _to,  _value);
+	     emit Transfer(_from, _to, _value);
 	}
 
 	/**
@@ -165,6 +177,7 @@ contract BitSTDView{
      */
 	function burn(uint256 _value) public returns (bool success) {
 	    return logic.burn( msg.sender, _value);
+	    emit Burn(msg.sender, _value);
 	}
 
 	/**
@@ -177,6 +190,7 @@ contract BitSTDView{
      */
 	function burnFrom(address _from, uint256 _value) public returns (bool success) {
 	    return logic.burnFrom( _from, msg.sender,  _value);
+	    emit Burn(_from, _value);
 	}
 
 	/// @notice Create `mintedAmount` tokens and send it to `target`
@@ -184,6 +198,8 @@ contract BitSTDView{
     /// @param mintedAmount the amount of tokens it will receive
 	function mintToken(address target, uint256 mintedAmount) onlyOwner public {
 	    logic.mintToken( target,this,  mintedAmount);
+	    emit Transfer(0, this, mintedAmount);
+        emit Transfer(this, target, mintedAmount);
 	}
 
 	/// @notice `freeze? Prevent | Allow` `target` from sending & receiving tokens
@@ -191,6 +207,7 @@ contract BitSTDView{
     /// @param freeze either to freeze it or not
 	function freezeAccount(address target, bool freeze) onlyOwner public {
 	    logic.freezeAccount( target,  freeze);
+	    emit FrozenFunds(target, freeze);
 	}
 
 	//The next two are buying and selling tokens
