@@ -2,5 +2,6 @@ BitSTDData: 0xeee562f065f94820a551b8e315a66d3e4d67a1aa
 BitSTDLogic: 0x60897d2e0f81c774b05f86ac2d7201ebf7333838
 BitSTDView: 0x6aacb94bed2765208c55e38aa6352fc0bc7d8110
 r50
+BitSTD V1.0 0xeeeec8542dec1993c76873524aca8ea9af9e2447
 
 Current version:0.4.24+commit.e67f0147.Emscripten.clang
