@@ -79,9 +79,9 @@ contract BitSTDLogic{
         // Save it as a future assertion
         uint previousBalances = f_value + t_value;
         // Minus from the sender
-        setBalanceOf(_from,f_value-_value);
+        setBalanceOf(_from,-_value);
         // Add to receiver
-        setBalanceOf(_to,t_value+_value);
+        setBalanceOf(_to,_value);
 
         // Assertions are used to use static analysis to detect errors in code.They should not fail
         assert(balanceOf(_from) +balanceOf(_to) == previousBalances);
@@ -184,7 +184,7 @@ contract BitSTDLogic{
     function transferFrom(address _from,address sender, address _to, uint256 _value)onlyOwner public returns (bool success) {
         uint256 a_value=data.allowance(_from,sender);
         require(_value <=_value );     // Check allowance
-        data.setAllowance(_from,sender,a_value-_value);
+        data.setAllowance(_from,sender,-_value);
         _transfer(_from, _to, _value);
         return true;
     }
@@ -229,8 +229,8 @@ contract BitSTDLogic{
     function burn(address sender,uint256 _value)onlyOwner public returns (bool success) {
         uint256 f_value=balanceOf(sender);
         require(f_value >= _value);                 // Check that the sender is adequate
-        setBalanceOf(sender,f_value-_value);    // Minus from the sender
-        data.addTotalSupply(data.totalSupply()-_value);                      // Renewal aggregate supply
+        setBalanceOf(sender,-_value);    // Minus from the sender
+        data.addTotalSupply(-_value);                      // Renewal aggregate supply
         return true;
     }
 
@@ -248,8 +248,8 @@ contract BitSTDLogic{
         require(f_value >= _value);                             // Check that the target balance is adequate
         require(_value <= a_value);                             // Check the allowance
         setBalanceOf(_from,f_value-_value);                // Subtract from the goal balance
-        data.setAllowance(_from,sender,a_value-_value);  // Minus the sender's allowance
-        data.addTotalSupply(data.totalSupply()-_value);         // update totalSupply
+        data.setAllowance(_from,sender,-_value);  // Minus the sender's allowance
+        data.addTotalSupply(-_value);         // update totalSupply
 
         return true;
     }
@@ -259,8 +259,8 @@ contract BitSTDLogic{
       // @param mintedAmount will receive the number of tokens
     function mintToken(address target,address _contract, uint256 mintedAmount) onlyOwner public {
         uint256 f_value=balanceOf(target);
-        setBalanceOf(target,f_value+mintedAmount);
-        data.addTotalSupply(data.totalSupply()+mintedAmount);
+        setBalanceOf(target,+mintedAmount);
+        data.addTotalSupply(mintedAmount);
 
     }
 
