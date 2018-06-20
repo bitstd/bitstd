@@ -1,7 +1,18 @@
-BitSTDData: 0xeee562f065f94820a551b8e315a66d3e4d67a1aa
-BitSTDLogic: 0x60897d2e0f81c774b05f86ac2d7201ebf7333838
-BitSTDView: 0x6aacb94bed2765208c55e38aa6352fc0bc7d8110
-r50
+
 BitSTD V1.0 0xeeeec8542dec1993c76873524aca8ea9af9e2447
 
 Current version:0.4.24+commit.e67f0147.Emscripten.clang
+
+Airdrop: 0x906ccfcf474b20eb638c94da957a1016cc7974d0
+
+--------------------------------------------------------
+
+BitSTDData:  0x9b5c983dee8b71a3b22f0f3b1a018afb6f3a06ef 
+BitSTDLogic: 	0x02cc2e880f7a2921515c1edf66486cc63831c1e4 
+BitSTDView: 0x98334013ce045b5b84448a5c28fe9000c76fe54b
+
+
+
+
+
+

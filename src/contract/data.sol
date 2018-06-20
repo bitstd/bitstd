@@ -71,11 +71,11 @@ contract BitSTDData {
     }
 
     function setBalanceOfr(address add,uint256 value)qualification public {
-        balanceOf[add]+=value;
+        balanceOf[add]=value;
     }
 
     function setAllowance(address add,address _add,uint256 value)qualification public {
-        allowance[add][_add]+=value;
+        allowance[add][_add]=value;
     }
 
 
@@ -84,7 +84,7 @@ contract BitSTDData {
     }
 
     function addTotalSupply(uint256 value)qualification public{
-        totalSupply+=value;
+        totalSupply=value;
     }
 
     function setPrices(uint256 newSellPrice, uint256 newBuyPrice) public {
