@@ -84,12 +84,13 @@ public class BinanceServiceImpl implements IBinanceService{
 		String content = "";
 		try {
 			trustAllHttpsCertificates();
-			HttpsURLConnection.setDefaultHostnameVerifier(hv); 
+			HttpsURLConnection.setDefaultHostnameVerifier(hv);
 			HashMap<String, String> paramMap = new HashMap<>();
 			paramMap.put("symbol", type);
 			String params = StringUtil.createLinkString(paramMap);
 			HttpUtilManager httpUtil = HttpUtilManager.getInstance();
-			URL url = new URL(Constants.BINANCE_API+"?"+params);
+//			URL url = new URL(Constants.BINANCE_API+"?"+params);
+			String url = Constants.BINANCE_API+"?"+params;
 			content = httpUtil.retrieveResponseFromServer(url);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -120,7 +121,7 @@ public class BinanceServiceImpl implements IBinanceService{
 	}
 	
 	@Override
-	public synchronized ExInfoBean getBinanceIndex(String type) {
+	public ExInfoBean getBinanceIndex(String type) {
 		ExInfoBean eb = new ExInfoBean();
 		if ("".equals(type) || type == null) {
 			return eb;
@@ -142,6 +143,7 @@ public class BinanceServiceImpl implements IBinanceService{
 					eb.ExBeanToPrint(type + " Binance");
 				}
 			}
+			Thread.sleep(200);
 		}catch(Exception ex){
 			ex.printStackTrace();
 		}

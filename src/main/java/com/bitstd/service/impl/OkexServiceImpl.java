@@ -11,6 +11,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.bitstd.model.ExInfoBean;
 import com.bitstd.service.IOkexService;
 import com.bitstd.utils.Constants;
+import com.bitstd.utils.HttpUtil;
 import com.bitstd.utils.HttpUtilManager;
 import com.bitstd.utils.StringUtil;
 
@@ -25,9 +26,8 @@ public class OkexServiceImpl implements IOkexService {
 
 	private String doRequest(String urlstr, HashMap<String, String> paramMap) throws HttpException, IOException {
 		String params = StringUtil.createLinkString(paramMap);
-		URL url = new URL(urlstr + "?" + params);
-		HttpUtilManager httpUtil = HttpUtilManager.getInstance();
-		return httpUtil.retrieveResponseFromServer(url);
+		HttpUtil httpUtil = HttpUtil.getInstance();
+		return httpUtil.requestHttpGet(urlstr,"",params);
 	}
 
 	@Override
@@ -49,6 +49,7 @@ public class OkexServiceImpl implements IOkexService {
 				eb.setVolume(volume);
 				eb.ExBeanToPrint(type + " Okex");
 			}
+			Thread.sleep(200);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -81,6 +82,7 @@ public class OkexServiceImpl implements IOkexService {
 				eb.setVolume(volume);
 				eb.ExBeanToPrint(type + " " + contract + " Okex");
 			}
+			Thread.sleep(200);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

@@ -11,6 +11,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.bitstd.model.ExInfoBean;
 import com.bitstd.service.IBitmexService;
 import com.bitstd.utils.Constants;
+import com.bitstd.utils.HttpUtil;
 import com.bitstd.utils.HttpUtilManager;
 import com.bitstd.utils.StringUtil;
 
@@ -29,14 +30,15 @@ public class BitmexServiceImpl implements IBitmexService {
 		paramMap.put("count", "1");
 		paramMap.put("reverse", "false");
 		String params = StringUtil.createLinkString(paramMap);
-		URL url = new URL(Constants.BITMEX_API + "?" + params);
-		HttpUtilManager httpUtil = HttpUtilManager.getInstance();
-		return httpUtil.retrieveResponseFromServer(url);
+//		String url = Constants.BITMEX_API + "?" + params;
+		HttpUtil httpUtil = HttpUtil.getInstance();
+		return httpUtil.requestHttpGet(Constants.BITMEX_API,"",params);
 	}
 
 	private double getBitmexXBTFutures(String type) {
 		double price = 0;
 		try {
+			Thread.sleep(200);
 			String content = doRequest(type);
 			JSONArray jarray = JSON.parseArray(content);
 			if (jarray != null && jarray.size() > 0) {
@@ -46,6 +48,8 @@ public class BitmexServiceImpl implements IBitmexService {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 		return price;
 	}
@@ -54,9 +58,10 @@ public class BitmexServiceImpl implements IBitmexService {
 	 *  XBTM18 ADAM18 BCHM18 ETHM18 LTCM18 XRPM18
 	 */
 	@Override
-	public synchronized ExInfoBean getBitmexFuturesIndex(String type) {
+	public ExInfoBean getBitmexFuturesIndex(String type) {
 		ExInfoBean eb = new ExInfoBean();
 		try {
+			Thread.sleep(200);
 			String content = doRequest(type);
 			JSONArray jarray = JSON.parseArray(content);
 			if (jarray != null && jarray.size() > 0) {
@@ -74,10 +79,14 @@ public class BitmexServiceImpl implements IBitmexService {
 					eb.ExBeanToPrint(type + " bitmex ");
 				}
 			}
+			
 		} catch (HttpException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 

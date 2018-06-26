@@ -23,13 +23,14 @@ import com.bitstd.utils.Tools;
 public class BitfinexServiceImpl implements IBitfinexService {
 
 	private String doRequest(String type) throws HttpException, IOException {
-		URL url = new URL(Constants.BITFINEX_API_TICKER + type);
+//		URL url = new URL(Constants.BITFINEX_API_TICKER + type);
+		String url = Constants.BITFINEX_API_TICKER + type;
 		HttpUtilManager httpUtil = HttpUtilManager.getInstance();
 		return httpUtil.retrieveResponseFromServer(url);
 	}
 
 	@Override
-	public synchronized ExInfoBean getBitfinexIndex(String type) {
+	public  ExInfoBean getBitfinexIndex(String type) {
 		ExInfoBean eb = new ExInfoBean();
 		if ("".equals(type) || type == null) {
 			return eb;
@@ -47,6 +48,7 @@ public class BitfinexServiceImpl implements IBitfinexService {
 					eb.ExBeanToPrint(type + " bitfinex ");
 				}
 			}
+			Thread.sleep(200);
 		} catch (HttpException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
