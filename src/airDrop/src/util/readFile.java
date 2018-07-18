@@ -1,9 +1,26 @@
 package util;
 
+import org.web3j.protocol.Web3j;
+import org.web3j.protocol.admin.Admin;
+import org.web3j.protocol.http.HttpService;
+import util.PropertyReader;
+
 import java.io.*;
+import java.math.BigInteger;
 
 public class readFile {
+    private static final String ethHost = PropertyReader.get("eth.api.host", "bitstd.properties");
+    public static int ko=Integer.parseInt(PropertyReader.get("PerformNumber", "bitstd.properties"));
+    public static String contractAddress = PropertyReader.get("eth.api.contract", "bitstd.properties");
+    public static BigInteger GAS_LIMIT=new BigInteger(PropertyReader.get("GAS_LIMIT", "bitstd.properties"));
+    public static Web3j web3j = Web3j.build(new HttpService(ethHost));
+    public static long Decimals=10;
+    static{
+        Decimals= (long) Math.pow(Decimals,Integer.parseInt(PropertyReader.get("Decimals","bitstd.properties")));
+    }
+
     public static String read(String file,String n){
+       // Admin admin=new Admin.build(new HttpService(ethHost));
         StringBuffer str = new StringBuffer("");;
         try {
             Reader reader = new FileReader(file);
@@ -58,5 +75,14 @@ public class readFile {
         }
 
         return true;
+    }
+    public static String strToHex(String s) {
+        String str = "";
+        for (int i = 0; i < s.length(); i++) {
+            int ch = (int) s.charAt(i);
+            String s4 = Integer.toHexString(ch);
+            str = str + s4;
+        }
+        return str;
     }
 }
