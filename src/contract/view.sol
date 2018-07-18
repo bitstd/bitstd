@@ -1,119 +1,110 @@
-contract BitSTDLogic {
-    function name()constant  public returns(string) {}
-	function symbol()constant  public returns(string) {}
-	function decimals()constant  public returns(uint8) {}
-	function totalSupply()constant  public returns(uint256) {}
-	function allowance(address add,address _add)constant  public returns(uint256) {}
-	function sellPrice()constant  public returns(uint256) {}
-	function buyPrice()constant  public returns(uint256) {}
-	function frozenAccount(address add)constant  public returns(bool) {}
-	function migration(address sender,address add) public{}
-	function balanceOf(address add)constant  public returns(uint256) {}
-	function transfer(address sender,address _to, uint256 _value) public {}
-	function transferFrom(address _from,address sender, address _to, uint256 _value) public returns (bool success) {}
-	function approve(address _spender,address sender, uint256 _value) public returns (bool success) {}
-	function approveAndCall(address _spender,address sender,address _contract, uint256 _value, bytes _extraData)public returns (bool success) {}
-	function burn(address sender,uint256 _value) public returns (bool success) {}
-	function burnFrom(address _from,address sender, uint256 _value) public returns (bool success) {}
-	function mintToken(address target,address _contract, uint256 mintedAmount)  public {}
-	function freezeAccount(address target, bool freeze)  public {}
-	function buy(address _contract,address sender,uint256 value) payable public {}
-	function sell(address _contract,address sender,uint256 amount) public {}
-	function Transfer_of_authority(address newOwner) public{}
-	function Transfer_of_authority_data(address newOwner) public {}
-	function setData(address dataAddress) public {}
-	// Old contract data
-    function getOld_BalanceOfr(address add)constant  public returns(uint256){}
-}
-contract BitSTDView{
+pragma solidity ^0.4.24;
 
-	BitSTDLogic private logic;
-	address public owner;
+import "browser/logic.sol";
 
+contract BitSTDView {
+
+    BitSTDLogic private logic;
+    address public owner;
     // This creates a public event on the blockchain that notifies the customer
     event Transfer(address indexed from, address indexed to, uint256 value);
     event FrozenFunds(address target, bool frozen);
-
     // This tells the customer how much money is being burned
     event Burn(address indexed from, uint256 value);
+    
+    //start Query data interface
+	    function balanceOf(address add)constant  public returns (uint256) {
 
-	//start Query data interface
-    function balanceOf(address add)constant  public returns(uint256) {
-	    return logic.balanceOf(add);
-	}
+		return logic.balanceOf(add);
+	    }
 
-	function name() constant  public returns(string) {
-	    return logic.name();
-	}
+	    function name() constant  public returns (string) {
 
-	function symbol() constant  public returns(string) {
-	    return logic.symbol();
-	}
+		return logic.name();
+	    }
 
-	function decimals() constant  public returns(uint8) {
-	    return logic.decimals();
-	}
+	    function symbol() constant  public returns (string) {
 
-	function totalSupply() constant  public returns(uint256) {
-	    return logic.totalSupply();
-	}
+		return logic.symbol();
+	    }
 
-	function allowance(address add,address _add) constant  public returns(uint256) {
-	    return logic.allowance(add,_add);
-	}
+	    function decimals() constant  public returns (uint8) {
 
-	function sellPrice() constant  public returns(uint256) {
-	    return logic.sellPrice();
-	}
+		return logic.decimals();
+	    }
 
-	function buyPrice() constant  public returns(uint256) {
-	    return logic.buyPrice();
-	}
+	    function totalSupply() constant  public returns (uint256) {
 
-	function frozenAccount(address add) constant  public returns(bool) {
-	    return logic.frozenAccount(add);
-	}
+		return logic.totalSupply();
+	    }
 
-	//End Query data interface
+	    function allowance(address authorizer, address sender) constant  public returns (uint256) {
 
-	//initialize
-    function BitSTDView(address logicAddressr) public {
-        logic=BitSTDLogic(logicAddressr);
+		return logic.allowance(authorizer, sender);
+	    }
+
+	    function sellPrice() constant  public returns (uint256) {
+
+		return logic.sellPrice();
+	    }
+
+	    function buyPrice() constant  public returns (uint256) {
+
+		return logic.buyPrice();
+	    }
+
+	    function frozenAccount(address addr) constant  public returns (bool) {
+
+		return logic.frozenAccount(addr);
+	    }
+    //End Query data interface
+
+    //initialize
+    constructor(address logicAddressr) public {
+    
+    	logic=BitSTDLogic(logicAddressr);
         owner=msg.sender;
     }
 
     //start Authority and control
     modifier onlyOwner(){
-		require(msg.sender == owner);
+    
+    	require(msg.sender == owner);
         _;
-	}
+    }
 
-	//Update the address of the data and logic layer
+    //Update the address of the data and logic layer
     function setBitSTD(address dataAddress,address logicAddressr) onlyOwner public{
+    
         logic=BitSTDLogic(logicAddressr);
         logic.setData(dataAddress);
     }
 
     //Hand over the logical layer authority
-    function Transfer_of_authority_logic(address newOwner) onlyOwner public{
-        logic.Transfer_of_authority(newOwner);
+    function transferLogicAuthority(address newOwner) onlyOwner public{
+    
+        logic.transferAuthority(newOwner);
     }
 
     //Hand over the data layer authority
-    function Transfer_of_authority_data(address newOwner) onlyOwner public{
-        logic.Transfer_of_authority_data(newOwner);
+    function transferDataAuthority(address newOwner) onlyOwner public{
+    
+        logic.transferDataAuthority(newOwner);
     }
 
     //Hand over the view layer authority
-    function Transfer_of_authority(address newOwner) onlyOwner public{
+    function transferAuthority(address newOwner) onlyOwner public{
+    
         owner=newOwner;
     }
     //End Authority and control
 
     //data migration
-    function migration(address add) public{
-        logic.migration(msg.sender,add);
-        emit Transfer(msg.sender, add,logic.getOld_BalanceOfr(add));
+    function migration(address addr) public {
+    
+        if (logic.migration(msg.sender, addr) == true) {
+            emit Transfer(msg.sender, addr,logic.getOldBalanceOf(addr));
+        }
     }
 
     /**
@@ -124,12 +115,14 @@ contract BitSTDView{
      * @param _to The address of the recipient
      * @param _value the amount to send
      */
-	function transfer(address _to, uint256 _value) public {
-	    logic.transfer(msg.sender,_to,_value);
-	    emit Transfer(msg.sender, _to, _value);
-	}
+    function transfer(address _to, uint256 _value) public {
+    
+    	if (logic.transfer(msg.sender, _to, _value) == true) {
+    		emit Transfer(msg.sender, _to, _value);
+    	}
+    }
 
-	/**
+    /**
      * Transfer tokens from other address
      *
      * Send `_value` tokens to `_to` in behalf of `_from`
@@ -138,12 +131,15 @@ contract BitSTDView{
      * @param _to The address of the recipient
      * @param _value the amount to send
      */
-	function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {
-	    return logic.transferFrom( _from, msg.sender,  _to,  _value);
-	     emit Transfer(_from, _to, _value);
-	}
+    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {
+    
+    	if (logic.transferFrom(_from, msg.sender, _to, _value) == true) {
+    		emit Transfer(_from, _to, _value);
+	        return true;
+    	}
+    }
 
-	/**
+    /**
      * Set allowance for other address
      *
      * Allows `_spender` to spend no more than `_value` tokens in your behalf
@@ -151,11 +147,12 @@ contract BitSTDView{
      * @param _spender The address authorized to spend
      * @param _value the max amount they can spend
      */
-	function approve(address _spender, uint256 _value) public returns (bool success) {
-	    return logic.approve( _spender, msg.sender,  _value);
-	}
+    function approve(address _spender, uint256 _value) public returns (bool success) {
+    
+    	return logic.approve( _spender, msg.sender,  _value);
+    }
 
-	/**
+    /**
      * Set allowance for other address and notify
      *
      * Allows `_spender` to spend no more than `_value` tokens in your behalf, and then ping the contract about it
@@ -164,23 +161,27 @@ contract BitSTDView{
      * @param _value the max amount they can spend
      * @param _extraData some extra information to send to the approved contract
      */
-	function approveAndCall(address _spender, uint256 _value, bytes _extraData) public returns (bool success) {
-	    return logic.approveAndCall( _spender, msg.sender,this,  _value,  _extraData);
-	}
+    function approveAndCall(address _spender, uint256 _value, bytes _extraData) public returns (bool success) {
+    
+    	return logic.approveAndCall(_spender, msg.sender, this, _value, _extraData);
+    }
 
-	/**
+    /**
      * Destroy tokens
      *
      * Remove `_value` tokens from the system irreversibly
      *
      * @param _value the amount of money to burn
      */
-	function burn(uint256 _value) public returns (bool success) {
-	    return logic.burn( msg.sender, _value);
-	    emit Burn(msg.sender, _value);
-	}
+    function burn(uint256 _value) public returns (bool success) {
+    
+    	if (logic.burn(msg.sender, _value) == true) {
+    		emit Burn(msg.sender, _value);
+	        return true;
+    	}
+    }
 
-	/**
+    /**
      * Destroy tokens from other account
      *
      * Remove `_value` tokens from the system irreversibly on behalf of `_from`.
@@ -188,35 +189,42 @@ contract BitSTDView{
      * @param _from the address of the sender
      * @param _value the amount of money to burn
      */
-	function burnFrom(address _from, uint256 _value) public returns (bool success) {
-	    return logic.burnFrom( _from, msg.sender,  _value);
-	    emit Burn(_from, _value);
-	}
+    function burnFrom(address _from, uint256 _value) public returns (bool success) {
+    
+    	if (logic.burnFrom( _from, msg.sender, _value) == true) {
+    		emit Burn(_from, _value);
+	        return true;
+    	}
+    }
 
-	/// @notice Create `mintedAmount` tokens and send it to `target`
+    /// @notice Create `mintedAmount` tokens and send it to `target`
     /// @param target Address to receive the tokens
     /// @param mintedAmount the amount of tokens it will receive
-	function mintToken(address target, uint256 mintedAmount) onlyOwner public {
-	    logic.mintToken( target,this,  mintedAmount);
-	    emit Transfer(0, this, mintedAmount);
+    function mintToken(address target, uint256 mintedAmount) onlyOwner public {
+    
+    	logic.mintToken(target, this,  mintedAmount);
+    	emit Transfer(0, this, mintedAmount);
         emit Transfer(this, target, mintedAmount);
-	}
+    }
 
-	/// @notice `freeze? Prevent | Allow` `target` from sending & receiving tokens
+    /// @notice `freeze? Prevent | Allow` `target` from sending & receiving tokens
     /// @param target Address to be frozen
     /// @param freeze either to freeze it or not
-	function freezeAccount(address target, bool freeze) onlyOwner public {
-	    logic.freezeAccount( target,  freeze);
-	    emit FrozenFunds(target, freeze);
-	}
+    function freezeAccount(address target, bool freeze) onlyOwner public {
+    
+    	if (logic.freezeAccount(target,  freeze) == true) {
+    		emit FrozenFunds(target, freeze);
+    	}
+    }
 
-	//The next two are buying and selling tokens
-	function buy() payable public {
-	    logic.buy( this,msg.sender,msg.value);
-	}
+    //The next two are buying and selling tokens
+    function buy() payable public {
+    
+    	logic.buy(this, msg.sender, msg.value);
+    }
 
-	function sell(uint256 amount) public {
-	    logic.sell( this,msg.sender, amount);
-	}
-
+    function sell(uint256 amount) public {
+    
+    	logic.sell(this,msg.sender, amount);
+    }
 }
