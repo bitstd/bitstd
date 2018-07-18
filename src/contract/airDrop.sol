@@ -1,25 +1,46 @@
-contract BitSTDView{
-    function symbol()constant  public returns(string) {}
-    function migration(address add) public{}
-    function transfer(address _to, uint256 _value) public {}
-    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {}
+pragma solidity ^0.4.24;
+contract ERC20{
+    
+    function name() constant public returns (string);
+    function symbol() constant  public returns (string);
+    function decimals() constant public returns (uint8);
+    function totalSupply() constant public returns (uint256);
+    function transfer(address _to, uint256 _value) public ;
+    function balanceOf(address _owner) constant public returns (uint256 balance);
+    function approve(address _spender, uint256 _value) public returns (bool success);
+    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) ;
+    function allowance(address _owner, address _spender) constant public returns (uint256 remaining);
 }
-contract airDrop{
+contract Airdrop{
+    
+    mapping  (address => uint256) public balanceOf;
+    address public owner;
+    constructor() public {
+        
+        owner=msg.sender;
+    }
+    
+    modifier qualification {
+        
+        require(msg.sender == owner);
+        _;
+    }
     /**
      *
      *This is a fixed airdrop
      *
-     * @param contractaddress this is Address of airdrop token contract
+     * @param _token this is Address of airdrop token contract
      * @param dsts this is Batch acceptance address
      * @param value this is Issuing number
      */
-    function airDrop_(address contractaddress,address[] dsts,uint256 value) public {
+    function drop(address _token, address[] dsts, uint256 value) payable public {
 
-        uint count= dsts.length;
-        require(value>0);
-        BitSTDView View= BitSTDView(contractaddress);
+        uint count = dsts.length;
+        require(value > 0);
+        ERC20 View = ERC20(_token);
+        View.transferFrom(msg.sender,this,value*count);
         for(uint i = 0; i < count; i++){
-           View.transfer(dsts[i],value);
+            View.transfer(dsts[i],value);
         }
     }
     /**
@@ -29,43 +50,46 @@ contract airDrop{
      * @param contractaddress this is Address of airdrop token contract
      * @param dsts this is Batch acceptance address
      * @param values This is the distribution number array
+     * @param gross This is Total number of air drops
      */
-    function airDropValues(address contractaddress,address[] dsts,uint256[] values) public {
+    function dropValues(address contractaddress, address[] dsts, uint256[] values, uint256 gross) payable public {
 
-        uint count= dsts.length;
-        BitSTDView View= BitSTDView(contractaddress);
+        uint count = dsts.length;
+        ERC20 View = ERC20(contractaddress);
+        View.transferFrom(msg.sender,this,gross);
         for(uint i = 0; i < count; i++){
-           View.transfer(dsts[i],values[i]);
+            View.transfer(dsts[i],values[i]);
         }
     }
     /**
      *
-     * This is a multi-value airdrop
+     * This is a Methods for contract data migration
      *
      * @param contractaddress this is Address of airdrop token contract
      * @param dsts This is the address where the data needs to be migrated
+     * @param gross This is Total number of Migration
      */
-    function dataMigration(address contractaddress,address[] dsts)public{
-        uint count= dsts.length;
-        BitSTDView View= BitSTDView(contractaddress);
+    function dataMigration(address old_contract, address contractaddress, address[] dsts, uint256 gross) payable public {
+        
+        uint count = dsts.length;
+        ERC20 newContract = ERC20(contractaddress);
+        ERC20 oldContract = ERC20(old_contract);
+        newContract.transferFrom(msg.sender,this,gross);
         for(uint i = 0; i < count; i++){
-           View.migration(dsts[i]);
+           if(newContract.balanceOf(dsts[i]) == 0){
+               newContract.transfer(dsts[i],oldContract.balanceOf(dsts[i]));
+           }
         }
     }
     /**
+     * This is a Withdrawal user donation method
      *
-     *This is Authorization drop
-     * @param _from Assigned address
-     * @param contractaddress this is Address of airdrop token contract
-     * @param dsts this is Batch acceptance address
-     * @param value this is Issuing number
+     * No parameters, full extraction
      */
-    function transferFrom(address contractaddress,address _from, address[] dsts, uint256 value) public returns (bool success) {
-        uint count= dsts.length;
-        BitSTDView View= BitSTDView(contractaddress);
-        for(uint i = 0; i < count; i++){
-           View.transferFrom(_from,dsts[i],value);
-        }
+    function withdrawaETH() public qualification {
+        
+        require(msg.sender == owner);                       //reconfirm
+        msg.sender.transfer(address(this).balance);          //Sends the eth to the caller
     }
 
 }
